@@ -1,0 +1,1154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roll Call — Prototype · Flipkart APM ’29</title>
+<style>
+/* ============ Roll Call prototype — design system ============ */
+:root {
+  /* stage (light, warm) */
+  --st-bg: #ECE7DD;
+  --st-panel: #FBFAF7;
+  --st-line: #D9D2C4;
+  --st-ink: #17161A;
+  --st-muted: #6E6A62;
+  --st-accent: #B3412A;
+
+  /* phone */
+  --paper: #FBFAF7;
+  --card: #FFFFFF;
+  --ink: #17161A;
+  --ink2: #3A3832;
+  --muted: #6E6A62;
+  --line: #E6E0D4;
+  --brand: #B3412A;
+  --brand-ink: #7F2C1C;
+  --brand-soft: #F7E4DE;
+  --here: #1B7F4B;   --here-bg: #E3F3EA;
+  --unk: #B7791F;    --unk-bg: #FBF0DC;
+  --wit: #5B6472;    --wit-bg: #E9ECF0;
+  --alert: #B91C1C;  --alert-bg: #FBE4E4;
+  --dark: #1E1C22;
+
+  --disp: "Avenir Next Condensed", "Roboto Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --sans: "Avenir Next", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "SF Mono", ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
+  --shadow: 0 1px 2px rgba(23, 22, 26, .06), 0 6px 20px rgba(23, 22, 26, .06);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--st-bg); color: var(--st-ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; padding: 0; text-align: left; }
+input { font: inherit; }
+[hidden] { display: none !important; }
+svg { display: block; }
+.chev { width: 16px; height: 16px; color: #B8B2A6; flex: none; }
+
+/* ============ Stage ============ */
+.stage { display: grid; grid-template-columns: 330px 1fr 372px; height: 100vh; gap: 0; }
+.panel { background: var(--st-panel); border-right: 1px solid var(--st-line); overflow: hidden; display: flex; flex-direction: column; }
+.panel.world { border-right: 0; border-left: 1px solid var(--st-line); overflow-y: auto; scrollbar-width: thin; }
+.center { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background:
+  radial-gradient(1200px 500px at 50% 110%, #F6F2E9 0, transparent 60%), var(--st-bg); }
+.center-hint { position: absolute; bottom: 12px; font-family: var(--disp); text-transform: uppercase; letter-spacing: .16em; font-size: 11px; color: var(--st-muted); }
+
+/* guide (left) */
+.guide { padding: 0; }
+.guide-head { padding: 22px 22px 14px; border-bottom: 1px solid var(--st-line); }
+.brandline { display: flex; align-items: center; gap: 10px; font-family: var(--disp); text-transform: uppercase; letter-spacing: .12em; font-size: 13px; font-weight: 600; }
+.brandline .logo { width: 26px; height: 26px; }
+.brandline em { font-style: normal; font-size: 10px; letter-spacing: .14em; color: var(--st-accent); border: 1px solid var(--st-accent); padding: 2px 7px; border-radius: 3px; margin-left: auto; }
+.guide h1 { font-family: var(--disp); font-weight: 600; font-size: 25px; line-height: 1.08; margin: 18px 0 10px; letter-spacing: -.005em; text-transform: uppercase; }
+.guide h1 span { color: var(--st-accent); }
+.guide .lede { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink2); }
+.tour-label { padding: 12px 22px 6px; font-family: var(--disp); text-transform: uppercase; letter-spacing: .14em; font-size: 11px; color: var(--st-muted); display: flex; justify-content: space-between; align-items: center; }
+.tour-label span { display: flex; gap: 4px; }
+.tour-label button { width: 24px; height: 24px; border: 1px solid var(--st-line); border-radius: 4px; display: grid; place-items: center; color: var(--st-ink); background: #fff; }
+.tour-label button:disabled { opacity: .35; cursor: default; }
+.tour-label button svg { width: 14px; height: 14px; }
+.tour { list-style: none; margin: 0; padding: 0 12px 16px; overflow-y: auto; flex: 1; scrollbar-width: thin; }
+.tour li { display: flex; gap: 12px; padding: 10px 10px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; }
+.tour li i { font-style: normal; font-family: var(--disp); font-weight: 600; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--st-line); display: grid; place-items: center; font-size: 12px; flex: none; color: var(--st-muted); background: #fff; }
+.tour li b { display: block; font-size: 13.5px; }
+.tour li span { display: none; font-size: 12px; line-height: 1.45; color: var(--ink2); margin-top: 3px; }
+.tour li.on { background: #fff; border-color: var(--st-line); box-shadow: var(--shadow); }
+.tour li.on span { display: block; }
+.tour li.on i { background: var(--st-accent); color: #fff; border-color: var(--st-accent); }
+.tour li.done i { background: var(--st-ink); color: #fff; border-color: var(--st-ink); }
+.tour li:hover:not(.on) { background: #F3EFE6; }
+.guide-foot { padding: 14px 22px 18px; border-top: 1px solid var(--st-line); font-size: 12px; line-height: 1.45; color: var(--ink2); }
+.guide-foot .byline { margin-top: 8px; font-family: var(--disp); text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; color: var(--st-muted); }
+
+/* world (right) */
+.world { padding: 0; }
+.w-head { padding: 18px 20px 12px; border-bottom: 1px solid var(--st-line); }
+.w-title { font-family: var(--disp); text-transform: uppercase; letter-spacing: .14em; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--st-accent); box-shadow: 0 0 0 0 rgba(179, 65, 42, .5); animation: pulse 1.8s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(179, 65, 42, .45); } 70% { box-shadow: 0 0 0 9px rgba(179, 65, 42, 0); } 100% { box-shadow: 0 0 0 0 rgba(179, 65, 42, 0); } }
+.w-sub { font-size: 12px; color: var(--ink2); margin-top: 4px; line-height: 1.4; }
+.w-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px; }
+.ws { background: #fff; border: 1px solid var(--st-line); border-radius: 8px; padding: 9px 11px; }
+.ws b { display: block; font-family: var(--disp); font-weight: 600; font-size: 22px; line-height: 1; }
+.ws span { display: block; font-size: 10.5px; color: var(--st-muted); margin-top: 3px; line-height: 1.3; }
+.ws .bar { margin-top: 6px; }
+.ws.fail b { color: var(--alert); }
+.ws.here b { color: var(--here); }
+
+.fp-wrap { padding: 4px 16px 10px; display: flex; gap: 12px; align-items: center; }
+.fp { width: 118px; flex: none; background: #2A2A30; border-radius: 16px 16px 20px 20px; padding: 10px 9px 12px; box-shadow: inset 0 0 0 1px #3B3B44; }
+.fp-screen { background: #C9D9B6; color: #16210F; font-family: var(--mono); font-size: 8.5px; line-height: 1.3; border-radius: 3px; padding: 5px 6px; height: 84px; overflow: hidden; display: flex; flex-direction: column; }
+.fp-screen.flash { animation: flash .5s; }
+@keyframes flash { 0% { filter: brightness(1.4); } 100% { filter: none; } }
+.fp-h { font-weight: 700; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid #9FB088; padding-bottom: 2px; margin-bottom: 3px; font-size: 7.5px; }
+.fp-b { flex: 1; overflow: hidden; }
+.fp-s { border-top: 1px solid #9FB088; padding-top: 2px; font-weight: 700; }
+.fp-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 8px; }
+.fp-keys i { height: 9px; background: #44444E; border-radius: 2px; }
+.fp-keys i.c { background: #B3412A; }
+.fp-cap { font-size: 11.5px; line-height: 1.4; color: var(--ink2); }
+.fp-cap b { display: block; font-family: var(--disp); text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; color: var(--st-muted); margin-bottom: 3px; }
+
+.console { flex: none; height: 170px; min-height: 110px; margin: 0 16px; background: #1E1C22; color: #D9D4C8; border-radius: 10px; padding: 10px 12px; overflow-y: auto; font-family: var(--mono); font-size: 11px; line-height: 1.5; scrollbar-width: thin; scrollbar-color: #3a3840 transparent; }
+.console .ln { display: flex; gap: 10px; padding: 3px 0; border-bottom: 1px solid #2C2A32; }
+.console em { font-style: normal; color: #8C877B; flex: none; }
+.console .in span { color: #9FE3BF; }
+.console .out span { color: #F6C9B8; }
+.console .net span { color: #F3D27A; }
+.console .ask span { color: #D9D4C8; }
+.console .notice span, .console .sys span { color: #B8C7E8; }
+.scenarios { padding: 12px 16px 16px; margin-top: auto; }
+.sc-label { font-family: var(--disp); text-transform: uppercase; letter-spacing: .14em; font-size: 11px; color: var(--st-muted); margin-bottom: 8px; }
+.sc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.sc-grid button { background: #fff; border: 1px solid var(--st-line); border-radius: 8px; padding: 9px 10px; transition: transform .12s, border-color .12s; }
+.sc-grid button:hover { border-color: var(--st-accent); transform: translateY(-1px); }
+.sc-grid b { display: block; font-size: 12.5px; }
+.sc-grid span { display: block; font-size: 10.5px; color: var(--st-muted); margin-top: 2px; line-height: 1.3; }
+.reset { margin-top: 10px; width: 100%; text-align: center; font-size: 12px; color: var(--st-muted); padding: 7px; border: 1px dashed var(--st-line); border-radius: 8px; }
+.reset:hover { color: var(--st-ink); }
+
+/* ============ Phone (2018 Android) ============ */
+.phone { width: 392px; height: 812px; background: #121216; border-radius: 34px; padding: 14px 12px 16px; box-shadow: 0 30px 60px rgba(23, 22, 26, .25), 0 2px 0 #2a2a30 inset, 0 0 0 2px #2E2E36; position: relative; }
+.phone::before { content: ""; position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; border-radius: 50%; background: #2A2A32; box-shadow: inset 0 0 0 2px #15151a; }
+.phone-inner { position: relative; width: 100%; height: 100%; border-radius: 22px; overflow: hidden; background: var(--paper); color: var(--ink); display: flex; flex-direction: column; font-family: var(--sans); font-size: 14px; }
+.statusbar { height: 24px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 11.5px; font-weight: 600; background: var(--paper); color: var(--ink); }
+.phone-inner[data-screen="lock"] .statusbar { background: transparent; color: #fff; position: absolute; left: 0; right: 0; top: 0; z-index: 3; }
+.sb-r { display: flex; align-items: center; gap: 5px; }
+.sb-r i { display: inline-block; }
+.sb-r .sig { width: 13px; height: 10px; background: linear-gradient(to top right, transparent 48%, currentColor 50%); clip-path: polygon(0 100%, 100% 0, 100% 100%); }
+.sb-r .lte { font-size: 9px; letter-spacing: .04em; }
+.sb-r .bat { width: 20px; height: 9px; border: 1.3px solid currentColor; border-radius: 2px; position: relative; }
+.sb-r .bat::after { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 11%; background: var(--alert); }
+.screen { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; position: relative; }
+.screen::-webkit-scrollbar { display: none; }
+.screen.enter { animation: slideIn .26s cubic-bezier(.2,.7,.2,1); }
+.screen.enter-back { animation: slideBack .22s cubic-bezier(.2,.7,.2,1); }
+.screen.enter-tab { animation: fade .2s; }
+@keyframes slideIn { from { transform: translateX(28px); opacity: 0; } }
+@keyframes slideBack { from { transform: translateX(-16px); opacity: 0; } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { transform: translateY(8px); opacity: 0; } }
+.androidnav { height: 40px; flex: none; display: flex; align-items: center; justify-content: center; gap: 64px; background: var(--paper); border-top: 1px solid var(--line); color: #55524B; }
+.androidnav i { display: block; }
+.androidnav .tri { width: 0; height: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-right: 12px solid currentColor; }
+.androidnav .cir { width: 14px; height: 14px; border: 2px solid currentColor; border-radius: 50%; }
+.androidnav .sq { width: 12px; height: 12px; border: 2px solid currentColor; border-radius: 2px; }
+.phone-inner[data-screen="lock"] .androidnav { display: none; }
+
+/* bottom tabs */
+.tabbar { height: 54px; flex: none; display: flex; background: #fff; border-top: 1px solid var(--line); }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #7B776E; font-size: 10.5px; font-weight: 600; position: relative; }
+.tab svg { width: 22px; height: 22px; }
+.tab.on { color: var(--brand); }
+.tab .dot { position: absolute; top: 7px; left: calc(50% + 7px); width: 8px; height: 8px; border-radius: 50%; background: var(--alert); border: 2px solid #fff; }
+
+/* ============ Common blocks ============ */
+.topbar { display: flex; align-items: center; gap: 10px; padding: 12px 14px 10px; }
+.topbar .logo { width: 30px; height: 30px; }
+.tb-t b { display: block; font-family: var(--disp); text-transform: uppercase; letter-spacing: .1em; font-size: 15px; font-weight: 600; }
+.tb-t span { display: block; font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+.topbar .ib { margin-left: auto; }
+.topbar .ib + .ib { margin-left: 0; }
+.ib { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: var(--ink2); position: relative; }
+.ib:hover { background: #F0EBE1; }
+.ib svg { width: 20px; height: 20px; }
+.ib i { position: absolute; top: 3px; right: 3px; min-width: 16px; height: 16px; border-radius: 8px; background: var(--brand); color: #fff; font-style: normal; font-size: 10px; font-weight: 700; display: grid; place-items: center; padding: 0 4px; }
+.nav { display: flex; align-items: center; gap: 8px; padding: 8px 10px; position: sticky; top: 0; background: var(--paper); z-index: 2; }
+.nav.scrolled { box-shadow: 0 1px 0 var(--line); }
+.nb { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; }
+.nb svg { width: 20px; height: 20px; }
+.nt { font-weight: 600; font-size: 16px; line-height: 1.15; }
+.nt small { display: block; font-weight: 400; font-size: 11.5px; color: var(--muted); }
+.sec { display: flex; align-items: baseline; justify-content: space-between; padding: 16px 16px 6px; font-family: var(--disp); text-transform: uppercase; letter-spacing: .14em; font-size: 11px; color: var(--muted); font-weight: 600; }
+.sec em { font-style: normal; font-family: var(--sans); text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 11px; }
+.sec em.red, .red { color: var(--alert); }
+.green { color: var(--here); }
+.muted { color: var(--muted); font-size: 12px; line-height: 1.4; }
+.av { display: inline-grid; place-items: center; border-radius: 50%; color: #fff; font-weight: 700; flex: none; letter-spacing: .02em; }
+.card { display: flex; gap: 12px; align-items: flex-start; margin: 0 12px 8px; padding: 12px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; width: calc(100% - 24px); }
+.card > svg { width: 22px; height: 22px; flex: none; color: var(--ink2); margin-top: 1px; }
+.card > div { flex: 1; min-width: 0; }
+.card b { display: block; font-size: 14px; }
+.card span { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.card span svg { width: 12px; height: 12px; display: inline-block; vertical-align: -2px; }
+.card p { margin: 6px 0 0; font-size: 13px; line-height: 1.45; color: var(--ink2); }
+.card.nudge { background: #FFF8EE; border-color: #F3DFBF; }
+.card.nudge > svg { color: var(--unk); }
+.card.nudge.hot { animation: hot 1.2s 2; }
+@keyframes hot { 50% { box-shadow: 0 0 0 4px rgba(183, 121, 31, .25); } }
+.card.flag { background: var(--alert-bg); border-color: #F2C9C9; }
+.card.flag > svg { color: var(--alert); }
+.card.ok { background: var(--here-bg); border-color: #BFE3CE; }
+.card.ok > svg { color: var(--here); }
+.card.add { border-style: dashed; background: transparent; }
+.card.add > svg { color: var(--brand); }
+.card.found > svg { color: var(--brand); }
+.card.found.big { padding: 14px; }
+.card .cd-t { margin-bottom: 8px; }
+.card.col { flex-direction: column; gap: 6px; }
+.card.col > div { width: 100%; }
+.card .btn { width: 100%; justify-content: center; margin-top: 4px; }
+.card small { display: block; margin-top: 8px; }
+.card.list { flex-direction: column; gap: 0; padding: 4px 0; }
+.li { display: grid; grid-template-columns: 22px 1fr auto; column-gap: 12px; align-items: center; padding: 9px 14px; width: 100%; }
+.li + .li { border-top: 1px solid var(--line); }
+.li svg { width: 20px; height: 20px; color: var(--ink2); grid-row: span 2; }
+.li b { font-size: 13.5px; }
+.li > span { font-size: 11.5px; color: var(--muted); grid-column: 2; margin: 0; }
+.li .chip { grid-column: 3; grid-row: 1 / span 2; }
+.li.dim { opacity: .6; }
+.li.rail { grid-template-columns: 22px 1fr; }
+.li.rail em { grid-column: 2; font-style: normal; font-size: 12px; color: var(--brand-ink); font-weight: 600; margin-top: 2px; }
+.row { display: flex; gap: 12px; align-items: center; padding: 10px 16px; width: 100%; border-bottom: 1px solid var(--line); background: var(--card); }
+.row:hover { background: #FAF7F1; }
+.row .rt { flex: 1; min-width: 0; }
+.row b { display: block; font-size: 14px; }
+.row .rt > span { display: block; font-size: 11.5px; color: var(--muted); margin: 1px 0 4px; }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 6px; line-height: 1.2; }
+.chip svg { width: 12px; height: 12px; }
+.chip em { font-style: normal; font-weight: 400; opacity: .85; }
+.chip.here { background: var(--here-bg); color: var(--here); }
+.chip.unk { background: var(--unk-bg); color: var(--unk); }
+.chip.wit { background: var(--wit-bg); color: var(--wit); }
+.chip.wait { background: #F1EEE7; color: var(--muted); }
+.chip.mini { font-size: 10.5px; padding: 2px 7px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 13.5px; border: 1px solid var(--line); background: #fff; color: var(--ink); }
+.btn svg { width: 17px; height: 17px; }
+.btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+.btn.primary:hover { background: var(--brand-ink); }
+.btn.primary:disabled { opacity: .45; cursor: default; }
+.btn.dark { background: var(--dark); border-color: var(--dark); color: #fff; }
+.btn.ghost { background: #fff; }
+.btn.ghost.quiet { color: var(--muted); }
+.btn.big { padding: 13px 16px; font-size: 15px; border-radius: 12px; width: 100%; }
+.btn .logo, .btn svg.logo { width: 20px; height: 20px; }
+.acts { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; }
+.acts .btn { width: 100%; }
+.explain { margin: 14px 16px 10px; font-size: 12px; line-height: 1.5; color: var(--ink2); padding: 10px 12px; border-left: 3px solid var(--brand); background: #FFF; border-radius: 0 8px 8px 0; }
+.foot-note { padding: 14px 16px 20px; font-size: 11.5px; color: var(--muted); text-align: center; }
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 6px 12px 4px; }
+.tile { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px; }
+.tile b { display: block; font-family: var(--disp); font-weight: 600; font-size: 26px; line-height: 1; letter-spacing: -.01em; }
+.tile span { display: block; font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.3; }
+.tile em { display: block; font-style: normal; font-size: 10.5px; color: var(--brand-ink); margin-top: 3px; }
+.bar { height: 8px; background: #EFEAE0; border-radius: 4px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--here); border-radius: 4px; transition: width .6s; }
+.bar.sm { height: 6px; }
+.ws.fail .bar i { background: var(--alert); }
+.ladder { list-style: none; margin: 0 16px; padding: 0; }
+.ladder li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: #fff; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 6px; }
+.ladder li i { font-style: normal; font-family: var(--disp); font-weight: 600; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font-size: 12px; flex: none; }
+.ladder li div { flex: 1; min-width: 0; }
+.ladder li b { display: block; font-size: 13.5px; }
+.ladder li span:not(.chip) { display: block; font-size: 11.5px; color: var(--muted); }
+.ladder li.on { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-soft); }
+.ladder li.on i { background: var(--brand); color: #fff; border-color: var(--brand); }
+.ladder li > span { flex: 1; font-size: 13px; }
+.tl { list-style: none; margin: 0 16px; padding: 0 0 0 0; }
+.tl li { display: grid; grid-template-columns: 78px 1fr; gap: 10px; padding: 7px 0; border-left: 2px solid var(--line); margin-left: 6px; padding-left: 14px; position: relative; }
+.tl li::before { content: ""; position: absolute; left: -6px; top: 13px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid var(--brand); }
+.tl em { font-style: normal; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tl span { font-size: 13px; line-height: 1.4; }
+.notice { display: flex; gap: 10px; margin: 0 12px 8px; padding: 11px 12px; background: #fff; border: 1px solid var(--line); border-radius: 10px; align-items: flex-start; }
+.notice > svg { width: 18px; height: 18px; flex: none; color: var(--here); margin-top: 2px; }
+.notice b { display: block; font-size: 12.5px; }
+.notice em { font-style: normal; font-size: 11px; color: var(--muted); }
+.notice p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink2); }
+.notice.warn { background: #FFF8EE; border-color: #F3DFBF; }
+.notice.warn > svg { color: var(--unk); }
+.notice.warn.hot { border-color: var(--alert); box-shadow: 0 0 0 3px rgba(185, 28, 28, .12); }
+.notice.here > svg { color: var(--here); }
+.notice.ink > svg { color: var(--ink2); }
+.matches { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.matches span { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; color: var(--here); background: var(--here-bg); padding: 3px 8px; border-radius: 6px; margin: 0; }
+.matches span svg { width: 12px; height: 12px; }
+.matches.card { padding: 10px 12px; margin-top: 0; }
+
+/* ============ Lock screen ============ */
+.lock { min-height: 100%; background: radial-gradient(900px 500px at 30% -10%, #3D2C33 0, #1B1A20 55%, #121216 100%); color: #fff; padding: 56px 16px 20px; display: flex; flex-direction: column; }
+.lk-time { font-family: var(--disp); font-weight: 400; font-size: 64px; line-height: 1; letter-spacing: -.01em; text-align: center; }
+.lk-date { text-align: center; font-size: 13px; color: #C9C3B6; margin-top: 6px; }
+.lk-card { background: rgba(255, 255, 255, .95); color: var(--ink); border-radius: 14px; padding: 12px 14px; margin-top: 26px; }
+.lk-card.dim { background: rgba(255, 255, 255, .78); margin-top: 8px; }
+.lk-from { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.lk-app { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; color: var(--brand); }
+.lk-app svg { width: 13px; height: 13px; }
+.lk-card b { display: block; font-size: 13.5px; }
+.lk-card p { margin: 3px 0 0; font-size: 13px; line-height: 1.45; color: var(--ink2); }
+.lk-foot { margin-top: auto; text-align: center; }
+.lk-foot .btn { background: #fff; color: var(--ink); border-color: #fff; }
+.lk-foot small { display: block; color: #A8A297; font-size: 11.5px; margin-top: 10px; }
+
+/* ============ Check-in ============ */
+.ci { min-height: 100%; display: flex; flex-direction: column; padding: 14px 20px 20px; }
+.ci-head { display: flex; align-items: center; gap: 8px; }
+.ci-head .logo { width: 26px; height: 26px; }
+.ci-head b { font-family: var(--disp); text-transform: uppercase; letter-spacing: .12em; font-size: 14px; font-weight: 600; }
+.ci-head em { margin-left: auto; font-style: normal; font-size: 11.5px; color: var(--muted); }
+.ci h1 { font-family: var(--disp); font-weight: 600; text-transform: uppercase; font-size: 46px; line-height: .98; margin: 36px 0 12px; letter-spacing: -.005em; }
+.ci-sub { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink2); }
+.here-btn { margin: 34px auto 0; width: 210px; height: 210px; border-radius: 50%; background: var(--brand); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: 0 14px 34px rgba(179, 65, 42, .35); transition: transform .12s; }
+.here-btn:active { transform: scale(.96); }
+.here-btn .ring { position: absolute; inset: -10px; border-radius: 50%; border: 2px solid rgba(179, 65, 42, .35); animation: ring 2s infinite; }
+@keyframes ring { 0% { transform: scale(.94); opacity: 1; } 100% { transform: scale(1.18); opacity: 0; } }
+.hb-l { font-family: var(--disp); text-transform: uppercase; font-weight: 600; font-size: 34px; letter-spacing: .02em; }
+.hb-s { font-size: 12px; opacity: .85; margin-top: 2px; }
+.ci-alt { text-align: center; margin-top: 22px; }
+.link { color: var(--brand-ink); font-weight: 600; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+.ci-foot { margin-top: auto; font-size: 11.5px; color: var(--muted); line-height: 1.45; text-align: center; padding-top: 16px; }
+.ci.sent h1 { margin-top: 10px; font-size: 40px; }
+.sent-mark { width: 60px; height: 60px; border-radius: 50%; background: var(--here); color: #fff; display: grid; place-items: center; margin: 24px 0 0; animation: pop .4s cubic-bezier(.2,.9,.3,1.4); }
+.sent-mark svg { width: 32px; height: 32px; }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } }
+.askers { list-style: none; margin: 16px 0 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow: hidden; }
+.askers li { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--line); opacity: .35; transition: opacity .3s; font-size: 13px; }
+.askers li:last-child { border-bottom: 0; }
+.askers li.on { opacity: 1; }
+.askers .rl { width: 24px; height: 24px; border-radius: 6px; background: var(--brand-soft); color: var(--brand-ink); display: grid; place-items: center; flex: none; }
+.askers .rl svg { width: 14px; height: 14px; }
+.askers b { font-weight: 600; }
+.askers em { font-style: normal; color: var(--muted); font-size: 11.5px; margin-left: auto; }
+.askers .tick { width: 16px; height: 16px; color: var(--here); opacity: 0; }
+.askers li.on .tick { opacity: 1; }
+.ci.sent .ci-foot { padding-top: 18px; }
+
+/* ============ Circle (home) ============ */
+.hero { display: flex; gap: 14px; align-items: center; padding: 6px 16px 14px; }
+.ring-wrap { position: relative; width: 104px; height: 104px; flex: none; }
+.ring-wrap svg { width: 104px; height: 104px; transform: rotate(-90deg); }
+.ring-wrap circle { fill: none; stroke-width: 9; }
+.ring-wrap .rg { stroke: #EFEAE0; }
+.ring-wrap .rh { stroke: var(--here); stroke-linecap: butt; transition: stroke-dasharray .6s; }
+.ring-wrap .rw { stroke: var(--wit); }
+.ring-n { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-n b { font-family: var(--disp); font-weight: 600; font-size: 34px; line-height: 1; }
+.ring-n span { font-size: 11px; color: var(--muted); }
+.hero-t h2 { font-family: var(--disp); text-transform: uppercase; font-weight: 600; font-size: 24px; line-height: 1; margin: 0 0 6px; }
+.hero-t p { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--ink2); }
+.legend { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.legend .l { font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 5px; }
+.legend .here { background: var(--here-bg); color: var(--here); }
+.legend .unk { background: var(--unk-bg); color: var(--unk); }
+.legend .wit { background: var(--wit-bg); color: var(--wit); }
+
+/* ============ Person ============ */
+.pd-head { display: flex; gap: 14px; align-items: center; padding: 8px 16px 12px; }
+.pd-st { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.pd-st .muted { font-size: 12px; }
+
+/* ============ Find ============ */
+.search { display: flex; align-items: center; gap: 8px; margin: 4px 12px 10px; padding: 0 10px 0 12px; height: 46px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.search > span svg { width: 20px; height: 20px; color: var(--muted); }
+.search input { flex: 1; border: 0; outline: 0; font-size: 15px; background: transparent; min-width: 0; }
+.try { display: flex; align-items: center; gap: 6px; padding: 0 16px 6px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.pill { padding: 5px 10px; border-radius: 99px; background: #fff; border: 1px solid var(--line); font-size: 12.5px; font-weight: 600; }
+.pill:hover { border-color: var(--brand); }
+.empty { padding: 14px 16px; font-size: 13px; color: var(--muted); line-height: 1.45; }
+
+/* ============ Area ============ */
+.card.count { flex-direction: column; gap: 10px; }
+.cnt-top { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; }
+.cnt-top > div > b { font-family: var(--disp); font-weight: 600; font-size: 44px; line-height: .95; }
+.cnt-top > div > span { font-size: 12px; }
+.cnt-n { text-align: right; }
+.cnt-n em { display: block; font-style: normal; font-family: var(--disp); font-weight: 600; font-size: 20px; line-height: 1; }
+.cnt-n span { font-size: 10.5px; margin-top: 3px; }
+.card.count .bar { width: 100%; }
+.cnt-foot { display: flex; justify-content: space-between; width: 100%; font-size: 11.5px; color: var(--muted); }
+.card.wards { flex-direction: column; gap: 8px; }
+.wd { display: grid; grid-template-columns: 92px 1fr 40px; gap: 10px; align-items: center; width: 100%; font-size: 12.5px; }
+.wd b { font-family: var(--disp); font-size: 15px; text-align: right; }
+
+/* ============ Rails ============ */
+.ussd { margin: 0 16px; background: #C9D9B6; color: #16210F; font-family: var(--mono); font-size: 13px; line-height: 1.5; border-radius: 6px; padding: 10px 12px; border: 6px solid #2A2A30; }
+.u-t { font-weight: 700; border-bottom: 1px solid #9FB088; margin-bottom: 4px; }
+.u-in { border-top: 1px solid #9FB088; margin-top: 4px; padding-top: 3px; }
+.caret { animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ============ Pulse ============ */
+.card.north { flex-direction: column; gap: 2px; background: var(--dark); color: #fff; border-color: var(--dark); }
+.card.north .k { font-family: var(--disp); text-transform: uppercase; letter-spacing: .14em; font-size: 10.5px; color: #C9C3B6; }
+.card.north b { font-family: var(--disp); font-weight: 600; font-size: 46px; line-height: 1; margin-top: 4px; }
+.card.north .kk { font-size: 14px; font-weight: 600; color: #fff; margin-top: 2px; }
+.card.north p { color: #C9C3B6; font-size: 12px; }
+.card.chart { flex-direction: column; gap: 6px; }
+.ch-h { display: flex; gap: 10px; align-items: baseline; width: 100%; }
+.ch-h b { font-family: var(--disp); font-weight: 600; font-size: 30px; line-height: 1; }
+.ch-h span { font-size: 11.5px; }
+.card.chart svg { width: 100%; height: 96px; }
+.card.chart .ln { fill: none; stroke: var(--brand); stroke-width: 2.5; stroke-linejoin: round; }
+.card.chart .tgt { stroke: var(--here); stroke-width: 1; stroke-dasharray: 4 4; }
+.card.chart .dt { fill: var(--brand); }
+.ch-x { display: flex; justify-content: space-between; width: 100%; font-size: 10.5px; color: var(--muted); }
+
+/* ============ Sheet, toast, banner, call overlay ============ */
+.sheet-wrap { position: absolute; inset: 0; background: rgba(23, 22, 26, .45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20; }
+.sheet-wrap.open { opacity: 1; pointer-events: auto; }
+.sheet { width: 100%; background: #fff; border-radius: 18px 18px 0 0; padding: 18px 18px 22px; transform: translateY(30px); transition: transform .25s cubic-bezier(.2,.7,.2,1); max-height: 86%; overflow-y: auto; }
+.sheet-wrap.open .sheet { transform: none; }
+.sheet h3 { margin: 0 0 8px; font-family: var(--disp); text-transform: uppercase; font-weight: 600; font-size: 22px; line-height: 1.05; }
+.sheet p { margin: 0 0 12px; font-size: 13.5px; line-height: 1.5; color: var(--ink2); }
+.sheet small { display: block; margin-top: 12px; font-size: 11.5px; color: var(--muted); line-height: 1.45; }
+.sheet .acts { padding: 0; }
+.sheet.care { border-top: 4px solid var(--wit); }
+.sheet blockquote { margin: 0 0 12px; padding: 10px 12px; border-left: 3px solid var(--wit); background: var(--wit-bg); font-size: 13.5px; line-height: 1.5; border-radius: 0 8px 8px 0; }
+.opts { display: flex; flex-direction: column; gap: 6px; }
+.opt { padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px; font-weight: 600; font-size: 13.5px; }
+.opt:hover { border-color: var(--brand); }
+.form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.form label { font-size: 11.5px; color: var(--muted); display: block; }
+.form input { display: block; width: 100%; margin-top: 3px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; }
+.msgbox { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; line-height: 1.45; margin-bottom: 12px; background: #FAF7F1; }
+.toast { position: absolute; left: 14px; right: 14px; bottom: 108px; background: var(--dark); color: #fff; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.4; opacity: 0; transform: translateY(8px); transition: all .22s; z-index: 30; pointer-events: none; box-shadow: var(--shadow); }
+.toast.show { opacity: 1; transform: none; }
+.toast.ok { background: var(--here); }
+.toast.warn { background: var(--unk); }
+.banner { position: absolute; left: 8px; right: 8px; top: 30px; background: #fff; border-radius: 14px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; box-shadow: 0 10px 30px rgba(23, 22, 26, .25); transform: translateY(calc(-100% - 48px)); transition: transform .3s cubic-bezier(.2,.7,.2,1); z-index: 25; cursor: pointer; border: 1px solid var(--line); }
+.banner.show { transform: none; }
+.banner .bi { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); flex: none; }
+.banner.here .bi { background: var(--here-bg); color: var(--here); }
+.banner.warn .bi { background: var(--unk-bg); color: var(--unk); }
+.banner.wit .bi { background: var(--wit-bg); color: var(--wit); }
+.banner .bi svg { width: 18px; height: 18px; }
+.banner > div { flex: 1; min-width: 0; }
+.banner b { display: block; font-size: 13px; }
+.banner span { display: block; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.banner em { font-style: normal; font-size: 10.5px; color: var(--muted); align-self: flex-start; }
+.callov { position: absolute; inset: 0; background: #1B1A20; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.callov.show { opacity: 1; }
+.co-av { width: 84px; height: 84px; border-radius: 50%; background: #3B5B8C; display: grid; place-items: center; font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+.callov b { font-size: 22px; font-weight: 600; }
+.callov span { font-size: 14px; color: #C9C3B6; }
+.callov.fail span { color: #F08A7E; font-weight: 600; }
+
+/* ============ solo (screenshot) mode ============ */
+body.solo { background: transparent; overflow: visible; }
+body.solo .stage { display: block; height: auto; }
+body.solo .guide, body.solo .world, body.solo .center-hint { display: none; }
+body.solo .center { background: none; display: block; padding: 16px; width: 424px; }
+body.solo .phone { zoom: 1; }
+body.solo .here-btn .ring, body.solo .pulse-dot { animation: none; }
+body.solo .toast, body.solo .callov { display: none; }
+
+@media (max-width: 1180px) { .stage { grid-template-columns: 290px 1fr 330px; } }
+@media (max-width: 980px) { .stage { grid-template-columns: 1fr; grid-template-rows: auto; overflow-y: auto; height: auto; } body { overflow: auto; } .panel { max-height: none; } .center { padding: 20px 0; } .center-hint { display: none; } }
+
+/* ============ short laptop screens ============ */
+@media (max-height: 900px) {
+  .guide-head { padding: 14px 18px 10px; }
+  .guide h1 { font-size: 21px; margin: 12px 0 8px; }
+  .guide .lede { font-size: 12px; line-height: 1.45; }
+  .tour li { padding: 7px 10px; } .tour li b { font-size: 13px; } .tour li span { font-size: 11.5px; }
+  .guide-foot { padding: 10px 18px 12px; font-size: 11.5px; }
+  .w-head { padding: 12px 16px 8px; } .w-sub { display: none; }
+  .w-stats { grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px 12px; }
+  .ws { padding: 7px 8px; } .ws b { font-size: 17px; } .ws span { font-size: 9.5px; } .ws .bar { height: 5px; margin-top: 4px; }
+  .fp-wrap { padding: 2px 12px 6px; } .fp { width: 104px; padding: 8px 8px 9px; } .fp-screen { height: 72px; font-size: 8px; } .fp-keys { margin-top: 6px; } .fp-keys i { height: 7px; }
+  .fp-cap { font-size: 11px; }
+  .console { height: 120px; margin: 0 12px; font-size: 10.5px; }
+  .scenarios { padding: 8px 12px 12px; }
+  .sc-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; } .sc-grid button { padding: 7px 8px; } .sc-grid b { font-size: 11.5px; } .sc-grid span { display: none; }
+  .reset { margin-top: 8px; padding: 5px; }
+}
+@media (max-height: 760px) {
+  .guide h1 { font-size: 18px; } .guide .lede { display: none; } .guide-foot { display: none; }
+  .fp-wrap { display: none; } .console { height: 100px; }
+}
+
+/* ============ film modes (used only by the walkthrough film) ============ */
+body.film { overflow: hidden; }
+body.film1 { background: transparent; }
+body.film1 .stage { display: block; height: 900px; width: 1512px; }
+body.film1 .guide, body.film1 .world, body.film1 .center-hint { display: none; }
+body.film1 .center { background: none; width: 1512px; height: 900px; display: flex; align-items: center; justify-content: center; padding: 0; }
+body.film1 .phone { zoom: 1; }
+body.film1 .toast { display: none; }
+body.film *, body.film *::before, body.film *::after { transition: none !important; }
+
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- LEFT: guided tour for evaluators -->
+  <aside class="panel guide" id="guide">
+    <div class="guide-head">
+      <div class="brandline"><span class="logo"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#B3412A"/><circle cx="16" cy="16" r="8.5" fill="none" stroke="#FFF8F0" stroke-width="2.2"/><circle cx="16" cy="16" r="3.2" fill="#FFF8F0"/><path d="M16 3.5v4M16 24.5v4M3.5 16h4M24.5 16h4" stroke="#FFF8F0" stroke-width="2.2" stroke-linecap="round"/></svg></span><span>Roll Call</span><em>prototype</em></div>
+      <h1>Half of everyone is gone.<br><span>Who is here?</span></h1>
+      <p class="lede">The day after the Snap, every survivor asks the same question about 10 to 40 people, by phone, at once. Roll Call turns a billion questions into one answer each: <b>say “I’m here” once</b>, on any phone, and everyone who was asking knows.</p>
+    </div>
+    <div class="tour-label">Guided tour <span><button id="tour-prev" data-act="tourPrev" aria-label="Previous">&#8249;</button><button id="tour-next" data-act="tourNext" aria-label="Next">&#8250;</button></span></div>
+    <ol class="tour" id="tour"></ol>
+    <div class="guide-foot">
+      <div>Persona: <b>Meera Joshi</b>, 29, primary-school teacher, Kothrud, Pune. Nine people she needs to hear from. Her phone is at 11%. It is 10:14 on the morning after.</div>
+      <div class="byline" id="byline">Aanya Jain · BITS Pilani · Flipkart APM ’29</div>
+    </div>
+  </aside>
+
+  <!-- CENTER: the phone (2018 Android) -->
+  <main class="center">
+    <div class="phone" id="phone">
+      <div class="phone-inner" data-screen="lock">
+        <div class="statusbar"><span class="sb-time">10:14</span><span class="sb-r"><i class="sig"></i><i class="lte">LTE</i><i class="bat"></i><span>11%</span></span></div>
+        <div class="screen" id="screen"></div>
+        <nav class="tabbar" id="tabbar" hidden></nav>
+        <div class="androidnav"><i class="tri"></i><i class="cir"></i><i class="sq"></i></div>
+        <div class="banner" id="banner"></div>
+        <div class="sheet-wrap" id="sheet-wrap"><div class="sheet" id="sheet"></div></div>
+        <div class="toast" id="toast"></div>
+        <div class="callov" id="callov"></div>
+      </div>
+    </div>
+    <div class="center-hint" id="center-hint">Clickable prototype · the day after · Pune, 2018</div>
+  </main>
+
+  <!-- RIGHT: the world outside the phone -->
+  <aside class="panel world" id="world">
+    <div class="w-head">
+      <div class="w-title"><span class="pulse-dot"></span>Pune district · Day 1 · live</div>
+      <div class="w-sub">What the network and the city look like right now. Every check-in on any phone lands here and fans out to the people asking.</div>
+    </div>
+    <div class="w-stats">
+      <div class="ws here"><b id="w-here">0</b><span>checked in · <span id="w-pct">0%</span> of ~52,30,000 expected</span><div class="bar"><i id="w-bar"></i></div></div>
+      <div class="ws fail"><b id="w-fail">0%</b><span>voice calls failing</span><div class="bar"><i id="w-failbar"></i></div></div>
+      <div class="ws"><b id="w-ans">0</b><span>open questions answered since 06:00</span></div>
+      <div class="ws"><b id="w-basic">0%</b><span>of check-ins from basic phones (SMS, USSD, missed call)</span></div>
+    </div>
+    <div class="fp-wrap">
+      <div class="fp"><div class="fp-screen" id="fp-screen"></div><div class="fp-keys"><i></i><i class="c"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="fp-cap"><b>A basic phone, anywhere</b>Kamala’s Nokia 105 in Nashik. No internet, ₹0 balance. The scenarios on the right drive it: SMS, USSD and missed call all work.</div>
+    </div>
+    <div class="console" id="console"></div>
+    <div class="scenarios">
+      <div class="sc-label">Fire a live scenario</div>
+      <div class="sc-grid" id="scn-grid"></div>
+      <button class="reset" data-act="reset">↺ Reset prototype</button>
+    </div>
+  </aside>
+</div>
+
+<script>
+/* Roll Call — prototype data. Everything here is fictional. Pune, the morning after the Snap (2018). */
+window.DATA = {
+  user: { name: 'Meera', full: 'Meera Joshi', initials: 'MJ', phone: '+91 98220 41xxx', area: 'Kothrud, Pune', pin: '411038' },
+  day: 'Day 1', date: 'Tue', clock: '10:14', battery: 11,
+
+  // Broadcast every SIM received, once, at 06:00
+  broadcast: { from: 'ROLLCL', time: '06:00',
+    text: 'ROLL CALL: Half of everyone is missing. Reply HERE to tell your family you are alive. Dial *444# to find someone. Please do not call: the network is jammed.' },
+
+  rails: [
+    { id: 'app', ic: 'phone', name: 'App', sub: 'Smartphones · 1 tap', how: 'Tap “I’m here”' },
+    { id: 'sms', ic: 'sms', name: 'SMS', sub: 'Any phone · free', how: 'Reply HERE to 5444' },
+    { id: 'ussd', ic: 'hash', name: 'USSD', sub: 'Any phone · no balance needed', how: 'Dial *444#' },
+    { id: 'call', ic: 'call', name: 'Missed call', sub: 'Any phone, even borrowed', how: 'Ring 1800-444-444 once' }
+  ],
+
+  // Meera's circle. status: here | unknown | witnessed | with
+  circle: [
+    { id: 'arjun', name: 'Arjun Joshi', rel: 'Husband', where: 'Kothrud, Pune', av: '#2F4858', status: 'here', via: 'app', at: '01:12', note: 'Walked home from Hinjewadi. 4 hours.', askers: 6 },
+    { id: 'kamala', name: 'Kamala Iyer', rel: 'Aai · 71', where: 'Nashik', av: '#8A4F2D', status: 'unknown', via: null, at: null, calls: 23, askers: 4, phone: 'Nokia 105 · basic phone', ladder: ['Meera Joshi', 'Vinod Iyer (nephew, Mumbai)', 'Mrs Deshpande (neighbour)'] },
+    { id: 'rohan', name: 'Rohan Iyer', rel: 'Brother', where: 'Andheri, Mumbai', av: '#3B5B8C', status: 'unknown', via: null, at: null, calls: 41, askers: 14 },
+    { id: 'neha', name: 'Neha Iyer', rel: 'Sister-in-law', where: 'Andheri, Mumbai', av: '#6B4C8E', status: 'unknown', via: null, at: null, calls: 17, askers: 9 },
+    { id: 'aanya', name: 'Tara Iyer', rel: 'Niece · 6', where: 'Andheri, Mumbai', av: '#C47A3A', status: 'unknown', via: null, at: null, calls: 0, askers: 11, dependent: true, guardians: ['rohan', 'neha'] },
+    { id: 'shobha', name: 'Shobha Joshi', rel: 'Mother-in-law · 64', where: 'Sadashiv Peth, Pune', av: '#7A6A3A', status: 'unknown', via: null, at: null, calls: 12, askers: 5, phone: 'Basic phone' },
+    { id: 'priya', name: 'Priya Nair', rel: 'Best friend', where: 'Baner, Pune', av: '#B23A48', status: 'here', via: 'app', at: '23:40', askers: 8 },
+    { id: 'sameer', name: 'Sameer Joshi', rel: 'Brother-in-law', where: 'Bengaluru', av: '#2E7D6B', status: 'here', via: 'call', at: '00:05', note: 'Missed call from a borrowed phone.', askers: 3 },
+    { id: 'vikram', name: 'Vikram Rane', rel: 'Principal, Sunrise School', where: 'Kothrud, Pune', av: '#4E5D6C', status: 'here', via: 'app', at: '06:31', note: 'School open from 9. 21 children came.', askers: 2 }
+  ],
+
+  // People who asked about Meera (her check-in fans out to them)
+  askers: [
+    { name: 'Arjun', via: 'app' }, { name: 'Aai', via: 'sms' }, { name: 'Priya', via: 'app' }, { name: 'Sameer', via: 'sms' },
+    { name: 'Vikram sir', via: 'app' }, { name: 'Shobha aai', via: 'sms' }, { name: 'Vinod (Mumbai)', via: 'sms' }, { name: 'Dubai · Rahul', via: 'sms', abroad: true }, { name: 'Sunrise School', via: 'app' }
+  ],
+
+  // People Meera looks after / who look after her
+  care: {
+    mine: [
+      { id: 'aanya', name: 'Tara Iyer', age: 6, rel: 'Niece', guardians: ['rohan', 'neha'], ladder: [
+        { who: 'Meera Joshi (you)', rel: 'Aunt · Kothrud, Pune · 148 km', id: 'meera' },
+        { who: 'Vinod Iyer', rel: 'Uncle · Dadar, Mumbai · 9 km', id: 'vinod', status: 'unknown' },
+        { who: 'Verified neighbour', rel: 'Checked-in adult, same building, opted in', id: 'neighbour' },
+        { who: 'Child Welfare Committee, Mumbai', rel: 'Statutory · Juvenile Justice Act', id: 'cwc' }
+      ] },
+      { id: 'kamala', name: 'Kamala Iyer', age: 71, rel: 'Mother', guardians: ['meera'], ladder: [
+        { who: 'Meera Joshi (you)', rel: 'Daughter · Pune', id: 'meera' },
+        { who: 'Vinod Iyer', rel: 'Nephew · Mumbai', id: 'vinod', status: 'unknown' },
+        { who: 'Mrs Deshpande', rel: 'Neighbour · next door, Nashik', id: 'deshpande' }
+      ] }
+    ],
+    forMe: [
+      { who: 'Arjun Joshi', rel: 'Husband', status: 'here' },
+      { who: 'Priya Nair', rel: 'Best friend', status: 'here' }
+    ]
+  },
+
+  // "Found alone" report that arrives in the scenario
+  found: { name: 'Tara', age: 6, reporter: 'Mrs Sunita Rao', reporterRel: 'Neighbour · 4th floor, Sea Breeze CHS, Andheri', reporterPhone: '+91 98201 7xxxx', via: 'ussd', at: '10:21',
+    details: 'Girl, about 6, says her name is Tara and her papa is Rohan. Found alone in flat 402. She is safe with me and has eaten.',
+    matches: ['Name', 'Age', 'Father’s name', 'Building'], vouch: 'Mr D. Shetty (building secretary, checked in 07:10)' },
+
+  // Witness report that arrives in the scenario
+  witness: { about: 'neha', by: 'Priya Menon', byRel: 'Neha’s colleague · Andheri office', at: '10:27',
+    text: 'I was with Neha in the 6th-floor meeting room when it happened. She was right next to me.' },
+
+  // The Count: Kothrud 411038
+  area: {
+    name: 'Kothrud · 411038', expected: 86400, here: 44900, viaBasic: 0.58, depFlagged: 1240, depPlaced: 410, helpers: 312,
+    wards: [
+      { w: 'Kothrud', pct: 52 }, { w: 'Warje', pct: 47 }, { w: 'Karve Nagar', pct: 55 }, { w: 'Erandwane', pct: 49 }, { w: 'Bavdhan', pct: 41 }
+    ],
+    notices: [
+      { from: 'Pune Municipal Corporation', at: '09:30', ok: true, text: 'Water supply normal in Kothrud and Karve Nagar today. Tankers for Bavdhan from 2 pm.' },
+      { from: 'Sassoon General Hospital', at: '08:55', ok: true, text: 'Patient board is live on Roll Call. Please do not call the switchboard. Dial *444#, option 2, then the patient’s number.' },
+      { from: 'Roll Call · verified', at: '08:10', ok: false, text: 'A forwarded “list of survivors in Mumbai” is circulating on WhatsApp. No such list exists. Do not forward it.' },
+      { from: 'Pune Police', at: '07:40', ok: true, text: 'Children found alone: dial *444# option 3 or go to the nearest school. Do not hand a child to anyone who is not on their Roll Call ladder.' }
+    ]
+  },
+
+  // Pulse: how the system is doing (Day 1, 10:14)
+  pulse: {
+    north: { label: 'Time to answer', value: '7h 20m', sub: 'Median time for an Unknown in a circle to become Here or Witnessed', target: '≤ 6h' },
+    resolved: 61, resolvedTarget: 80,
+    series: [0, 4, 9, 16, 22, 29, 36, 41, 47, 52, 56, 61],
+    tiles: [
+      { k: 'Check-ins via basic phones', v: '58%', s: 'SMS, USSD, missed call' },
+      { k: 'Dependents placed in 12h', v: '33%', s: 'target ≥ 70%' },
+      { k: 'Call attempts per SIM', v: '−64%', s: 'vs. the first hour' },
+      { k: 'Witnessed reversed', v: '0.3%', s: 'guardrail < 0.5%' }
+    ]
+  },
+
+  // Live world counters (Pune district). These drift during the session.
+  world: { expected: 5230000, here: 2412000, failing: 91, answered: 18200000, basic: 61 },
+
+  // Activity feed at start
+  log: [
+    { t: '10:12', k: 'sys', m: 'Pune: 2,412,000 check-ins (46% of expected). 61% from basic phones.' },
+    { t: '10:09', k: 'net', m: 'Voice calls failing: 91%. SMS delivery: 97%.' },
+    { t: '10:02', k: 'in', m: 'Vikram Rane · app · Kothrud' },
+    { t: '09:58', k: 'ask', m: '14 people are asking about Rohan Iyer. 41 failed calls from you alone.' },
+    { t: '09:30', k: 'notice', m: 'PMC: water supply normal in Kothrud.' },
+    { t: '06:00', k: 'sys', m: 'Broadcast sent once to every SIM in Maharashtra: “Reply HERE…”' }
+  ],
+
+  // Guided tour (left panel). act: screen | scenario
+  tour: [
+    { t: 'The morning after', d: 'Half of everyone is missing. Every phone got one SMS, once. No app needed to answer it.', s: 'lock' },
+    { t: '“I’m here”', d: 'One tap. Nine people who were asking about Meera find out at the same moment, three of them on basic phones, one in Dubai.', s: 'checkin' },
+    { t: 'Her circle', d: 'Four of nine here. Three states only: Here, Unknown, Witnessed. Silence is never shown as death.', s: 'circle' },
+    { t: 'Don’t call', d: 'Forty-one failed calls to Rohan. The app replaces the retry storm: it will tell her the moment he answers, on any rail.', s: 'person', p: { id: 'rohan' }, scn: 'jam' },
+    { t: 'Aai’s Nokia', d: 'Kamala, 71, replies HERE from a ₹1,200 phone in Nashik. Meera’s phone updates before Kamala has put hers down.', scn: 'sms' },
+    { t: 'Find anyone', d: 'A number or a name. If they are registered, their status. If not, you join the people asking, and you hear the second they check in.', s: 'find' },
+    { t: 'Who depends on whom', d: 'Tara, 6. Both guardians Unknown for 16 hours. Roll Call flags her and starts the kin ladder: aunt, uncle, verified neighbour, Child Welfare Committee.', s: 'care' },
+    { t: 'Found alone', d: 'A neighbour in Mumbai dials *444# option 3. Four fields match. Meera is told where Tara is and who vouches for the neighbour.', scn: 'found' },
+    { t: 'Witnessed', d: 'A colleague who was with Neha reports it. Shown as “Witnessed by Priya”, never as fact, always reversible. Rohan stays Unknown.', scn: 'witness' },
+    { t: 'The Count', d: 'Kothrud: 52% of expected survivors checked in. Verified notices from the city and the hospital crowd out the WhatsApp rumour.', s: 'area', scn: 'rumour' },
+    { t: 'Four ways in', d: 'App, SMS, USSD, missed call. Zero-rated by the four telcos under the Telegraph Act. Reach beats features.', s: 'rails' },
+    { t: 'How we’ll know', d: 'North star: time to answer. Target 80% of a circle resolved within 24 hours. Counter-metric: a pincode above 50% means impersonation.', s: 'pulse' }
+  ],
+
+  scenarios: [
+    { id: 'jam', name: 'Network jam', sub: 'Calls fail; the app says don’t call' },
+    { id: 'sms', name: 'Nokia check-in', sub: 'Aai replies HERE by SMS' },
+    { id: 'missed', name: 'Missed call', sub: 'Shobha aai rings the toll-free number once' },
+    { id: 'found', name: 'Child found alone', sub: 'A stranger reports Tara via *444#' },
+    { id: 'witness', name: 'Witness report', sub: 'A colleague saw Neha vanish' },
+    { id: 'rumour', name: 'Rumour wave', sub: 'A fake survivor list spreads' }
+  ]
+};
+
+</script>
+<script>
+/* Roll Call — clickable prototype. Vanilla JS, no dependencies; runs from file://. */
+(function () {
+  'use strict';
+  const D = window.DATA;
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+  const num = (n) => Math.round(n).toLocaleString('en-IN');
+  const SOLO = new URLSearchParams(location.search).get('solo');
+  const FILM = new URLSearchParams(location.search).get('film');
+
+  /* ================= icons ================= */
+  const P = {
+    circle: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/>',
+    find: '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>',
+    care: '<path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10z"/>',
+    area: '<path d="M3.5 7 9 4.5l6 2.5 5.5-2.5v14L15 21l-6-2.5L3.5 21z"/><path d="M9 4.5v14M15 7v14"/>',
+    bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+    pulse: '<path d="M3 12h4l2.5-6 4 12 2.5-6H21"/>',
+    back: '<path d="M19 12H5M11 5.5 4.5 12l6.5 6.5"/>',
+    chevR: '<path d="m9 5.5 6.5 6.5L9 18.5"/>',
+    check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>', x: '<path d="M6 6l12 12M18 6 6 18"/>',
+    phone: '<rect x="6.5" y="2.5" width="11" height="19" rx="2"/><path d="M10.5 18.5h3"/>',
+    sms: '<path d="M4 5.5h16v10H9l-4 3.5z"/><path d="M8 9h8M8 12h5"/>',
+    hash: '<path d="M9.5 3.5 7.5 20.5M16.5 3.5l-2 17M4 9h17M3 15h17"/>',
+    call: '<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/>',
+    callx: '<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/><path d="m15 4 5 5m0-5-5 5"/>',
+    eye: '<path d="M2 12s3.8-7 10-7 10 7 10 7-3.8 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+    people: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 6 4.8"/>',
+    child: '<circle cx="12" cy="6.5" r="3"/><path d="M7 21v-6a5 5 0 0 1 10 0v6M9 21v-4M15 21v-4"/>',
+    elder: '<circle cx="12" cy="5.5" r="2.6"/><path d="M9 21v-7l-2-5a5 5 0 0 1 10 0l-2 5v7M17.5 12l2 9"/>',
+    shield: '<path d="M12 2.8 19.5 6v5.6c0 4.7-3.2 8.3-7.5 9.6-4.3-1.3-7.5-4.9-7.5-9.6V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+    alert: '<path d="M12 3.5 22 20.5H2z"/><path d="M12 10v4.5M12 17.6v.3"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5.5l3.5 2"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    send: '<path d="M4 12 20 4l-6 16-3-7z"/>',
+    hand: '<path d="M8 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1V4a1.5 1.5 0 0 1 3 0v6m0-.5V6a1.5 1.5 0 0 1 3 0v8a7 7 0 0 1-7 7h-.6a6 6 0 0 1-4.6-2.2L2.6 15a1.6 1.6 0 0 1 2.4-2.1L8 15.5V11"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/>',
+    home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    menu: '<circle cx="12" cy="5" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="19" r="1.4" fill="currentColor"/>',
+    bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+    ward: '<path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6M12 9v3M10.5 10.5h3"/>',
+    undo: '<path d="M9 7 4 12l5 5"/><path d="M4 12h10a6 6 0 0 1 0 12"/>'
+  };
+  const ic = (n, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || ''}</svg>`;
+  const LOGO = (bg = '#B3412A', fg = '#FFF8F0') => `<svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="${bg}"/><circle cx="16" cy="16" r="8.5" fill="none" stroke="${fg}" stroke-width="2.2"/><circle cx="16" cy="16" r="3.2" fill="${fg}"/><path d="M16 3.5v4M16 24.5v4M3.5 16h4M24.5 16h4" stroke="${fg}" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+  const av = (p, size = 40) => `<span class="av" style="background:${p.av};width:${size}px;height:${size}px;font-size:${Math.round(size * 0.36)}px">${p.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>`;
+  const RAIL = { app: 'app', sms: 'SMS', ussd: 'USSD', call: 'missed call' };
+  const RAILIC = { app: 'phone', sms: 'sms', ussd: 'hash', call: 'call' };
+
+  /* ================= state ================= */
+  let S;
+  function fresh() {
+    return {
+      screen: 'lock', params: {}, stack: [], checked: false, sentN: 0,
+      circle: clone(D.circle), world: clone(D.world), log: clone(D.log), done: {}, tourStep: -1,
+      notifs: [
+        { t: '06:31', ic: 'check', tone: 'here', m: 'Vikram sir is here (app, Kothrud).' },
+        { t: '06:00', ic: 'sms', tone: 'ink', m: 'Roll Call broadcast received. Reply HERE or open the app.' },
+        { t: '01:12', ic: 'check', tone: 'here', m: 'Arjun is here (app, Kothrud).' },
+        { t: '00:05', ic: 'call', tone: 'here', m: 'Sameer is here (missed call, Bengaluru).' },
+        { t: '23:40', ic: 'check', tone: 'here', m: 'Priya is here (app, Baner).' }
+      ], unread: 0, aanyaWith: null, witnessPending: false, withHer: false, findQ: '', askedNumbers: [], rumour: false, jam: false
+    };
+  }
+  const person = (id) => S.circle.find((p) => p.id === id);
+  const counts = () => ({ here: S.circle.filter((p) => p.status === 'here' || p.status === 'with').length, unknown: S.circle.filter((p) => p.status === 'unknown').length, witnessed: S.circle.filter((p) => p.status === 'witnessed').length, total: S.circle.length });
+
+  /* ================= router ================= */
+  const TABS = ['circle', 'find', 'care', 'area'];
+  function go(screen, params = {}, opts = {}) {
+    const isTab = TABS.includes(screen);
+    if (!opts.replace && S.screen !== screen && !isTab) S.stack.push({ screen: S.screen, params: S.params, scroll: screenEl().scrollTop });
+    if (isTab) S.stack = [];
+    const from = S.screen; S.screen = screen; S.params = params;
+    render(isTab && TABS.includes(from) ? 'tab' : 'fwd');
+  }
+  function back() {
+    const prev = S.stack.pop();
+    S.screen = prev ? prev.screen : 'circle'; S.params = prev ? prev.params : {};
+    render('back');
+    if (prev && prev.scroll) { screenEl().scrollTop = prev.scroll; }
+  }
+  const screenEl = () => $('#screen');
+  function render(dir) {
+    const el = screenEl(), fn = SCREENS[S.screen] || SCREENS.circle;
+    const inner = $('.phone-inner');
+    inner.dataset.screen = S.screen;
+    el.classList.remove('enter', 'enter-back', 'enter-tab'); void el.offsetWidth;
+    if (dir) el.classList.add(dir === 'back' ? 'enter-back' : dir === 'tab' ? 'enter-tab' : 'enter');
+    el.innerHTML = fn(S.params); el.scrollTop = 0;
+    renderTabbar(); motion(el, !!dir);
+    const nav = $('.nav', el); if (nav) { el.onscroll = () => nav.classList.toggle('scrolled', el.scrollTop > 6); } else el.onscroll = null;
+  }
+  function rerenderKeep() { const el = screenEl(), y = el.scrollTop; el.innerHTML = (SCREENS[S.screen])(S.params); el.scrollTop = y; renderTabbar(); motion(el, false); }
+  function motion(el, play) { if (!play || SOLO) return; $$('.card, .row, .tile, .notice, .ladder li', el).slice(0, 18).forEach((n, i) => { n.style.animation = `rise .32s ${Math.min(i * 28, 400)}ms cubic-bezier(.2,.7,.2,1) both`; }); }
+  function renderTabbar() {
+    const tb = $('#tabbar'); const show = !['lock', 'checkin'].includes(S.screen);
+    tb.hidden = !show; if (!show) return;
+    const cur = TABS.includes(S.screen) ? S.screen : (S.stack[0] && TABS.includes(S.stack[0].screen) ? S.stack[0].screen : 'circle');
+    const items = [['circle', 'Circle', 'circle'], ['find', 'Find', 'find'], ['care', 'Care', 'care'], ['area', 'Area', 'area']];
+    tb.innerHTML = items.map(([id, label, i]) => `<button class="tab ${cur === id ? 'on' : ''}" data-go="${id}">${ic(i)}<span>${label}</span>${id === 'care' && person('aanya').status === 'unknown' ? '<i class="dot"></i>' : ''}</button>`).join('');
+  }
+
+  /* ================= building blocks ================= */
+  const nav = (title, opts = {}) => `<div class="nav ${opts.cls || ''}"><button class="nb" data-act="back" aria-label="Back">${ic('back')}</button><div class="nt">${title}${opts.sub ? `<small>${opts.sub}</small>` : ''}</div>${opts.right || '<span></span>'}</div>`;
+  const chip = (p) => {
+    if (p.status === 'here') return `<span class="chip here">${ic('check')} Here <em>· ${RAIL[p.via]} · ${p.at}</em></span>`;
+    if (p.status === 'with') return `<span class="chip here">${ic('check')} With ${p.withWho} <em>· ${p.at}</em></span>`;
+    if (p.status === 'witnessed') return `<span class="chip wit">${ic('eye')} Witnessed by ${p.witBy}</span>`;
+    return `<span class="chip unk">${ic('clock')} Unknown${p.calls ? ` <em>· ${p.calls} failed calls</em>` : ''}</span>`;
+  };
+  const row = (p) => `<button class="row" data-go="person" data-id="${p.id}">${av(p)}<div class="rt"><b>${p.name}</b><span>${p.rel} · ${p.where}</span>${chip(p)}</div>${ic('chevR', 'chev')}</button>`;
+  const section = (t, extra = '') => `<div class="sec"><span>${t}</span>${extra}</div>`;
+
+  /* ================= screens ================= */
+  const SCREENS = {
+    lock() {
+      return `<div class="lock">
+        <div class="lk-time">${D.clock}</div><div class="lk-date">Tuesday · the day after</div>
+        <div class="lk-card">
+          <div class="lk-from"><span class="lk-app">${ic('sms')} Messages</span><span>${D.broadcast.time}</span></div>
+          <b>${D.broadcast.from}</b>
+          <p>${D.broadcast.text}</p>
+        </div>
+        <div class="lk-card dim"><div class="lk-from"><span class="lk-app">${ic('callx')} Phone</span><span>09:58</span></div><b>41 missed calls · 63 failed calls</b><p>Network busy. Calls to Rohan, Aai, Neha, Shobha aai did not connect.</p></div>
+        <div class="lk-foot"><button class="btn primary big" data-go="checkin">${LOGO()} Open Roll Call</button><small>Or reply HERE to the SMS. Same result.</small></div>
+      </div>`;
+    },
+    checkin() {
+      if (!S.checked) return `<div class="ci">
+        <div class="ci-head"><span class="logo">${LOGO()}</span><b>Roll Call</b><em>Day 1 · ${D.clock}</em></div>
+        <h1>Meera,<br>are you here?</h1>
+        <p class="ci-sub"><b>${D.askers.length} people</b> have asked about you since last night. One tap answers all of them, on every phone, at once.</p>
+        <button class="here-btn" data-act="checkin"><span class="ring"></span><span class="hb-l">I’m here</span><span class="hb-s">Tap once</span></button>
+        <div class="ci-alt"><button class="link" data-act="withme">Someone is with you? Check them in too</button></div>
+        <div class="ci-foot">Sent as one message from your SIM. No internet needed after this screen. Nothing else is shared.</div>
+      </div>`;
+      return `<div class="ci sent">
+        <div class="ci-head"><span class="logo">${LOGO()}</span><b>Roll Call</b><em>Day 1 · ${D.clock}</em></div>
+        <div class="sent-mark">${ic('check')}</div>
+        <h1>You’re here.</h1>
+        <p class="ci-sub">Delivered to the ${D.askers.length} people who were asking. They can stop calling now.</p>
+        <ul class="askers">${D.askers.map((a, i) => `<li class="${i < S.sentN ? 'on' : ''}"><span class="rl">${ic(RAILIC[a.via])}</span><b>${a.name}</b><em>${a.abroad ? 'abroad · ' : ''}${RAIL[a.via]}</em>${ic('check', 'tick')}</li>`).join('')}</ul>
+        <div class="ci-foot"><button class="btn primary big" data-go="circle" ${S.sentN < D.askers.length ? 'disabled' : ''}>Now, your circle ${ic('chevR')}</button></div>
+      </div>`;
+    },
+    circle() {
+      const c = counts();
+      const unk = S.circle.filter((p) => p.status === 'unknown'), here = S.circle.filter((p) => p.status === 'here' || p.status === 'with'), wit = S.circle.filter((p) => p.status === 'witnessed');
+      const pct = Math.round(100 * (c.here + c.witnessed) / c.total);
+      return `<div class="home">
+        <div class="topbar"><span class="logo">${LOGO()}</span><div class="tb-t"><b>Roll Call</b><span>${D.day} · ${D.date} ${D.clock} · ${D.user.area}</span></div><button class="ib" data-go="pulse" aria-label="Pulse">${ic('pulse')}</button><button class="ib" data-go="notifs" aria-label="Notifications">${ic('bell')}${S.unread ? `<i>${S.unread}</i>` : ''}</button></div>
+        <div class="hero">
+          <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="rg"/><circle cx="60" cy="60" r="52" class="rh" style="stroke-dasharray:${(c.here / c.total) * 326.7} 326.7"/><circle cx="60" cy="60" r="52" class="rw" style="stroke-dasharray:${(c.witnessed / c.total) * 326.7} 326.7;stroke-dashoffset:${-(c.here / c.total) * 326.7}"/></svg><div class="ring-n"><b>${c.here}</b><span>of ${c.total}</span></div></div>
+          <div class="hero-t"><h2>${c.here} of ${c.total} here</h2><p>${c.unknown} still unknown${c.witnessed ? `, ${c.witnessed} witnessed` : ''}. You’ll know the moment anyone answers, on any phone.</p>
+            <div class="legend"><span class="l here">Here ${c.here}</span><span class="l unk">Unknown ${c.unknown}</span><span class="l wit">Witnessed ${c.witnessed}</span></div></div>
+        </div>
+        ${unk.some((p) => p.calls) ? `<div class="card nudge ${S.jam ? 'hot' : ''}">${ic('callx')}<div><b>Please don’t call.</b><span>${unk.reduce((a, p) => a + (p.calls || 0), 0)} of your calls failed since last night. Roll Call is already asking ${unk.length === 1 ? 'them' : unk.length + ' people'} by SMS and USSD, and will tell you first.</span></div></div>` : ''}
+        ${person('aanya').status === 'unknown' ? `<button class="card flag" data-go="careDetail" data-id="aanya">${ic('child')}<div><b>Tara, 6: no guardian accounted for</b><span>Rohan and Neha both Unknown for 16 h. Kin ladder started. You are first on it.</span></div>${ic('chevR', 'chev')}</button>` : ''}
+        ${unk.length ? section(`Still unknown · ${unk.length}`, `<em>asking by SMS, USSD, missed call</em>`) + unk.map(row).join('') : ''}
+        ${wit.length ? section(`Witnessed · ${wit.length}`) + wit.map(row).join('') : ''}
+        ${section(`Here · ${here.length}`)}${here.map(row).join('')}
+        <button class="card add" data-go="find">${ic('plus')}<div><b>Add someone who matters</b><span>A number or a name. They don’t need the app.</span></div></button>
+        <div class="foot-note">Three states only. Unknown never becomes anything else on its own.</div>
+      </div>`;
+    },
+    person({ id }) {
+      const p = person(id);
+      const tl = [];
+      tl.push(['22:10', 'You asked about ' + p.name.split(' ')[0] + '. Added to the ' + p.askers + ' people asking.']);
+      tl.push(['06:00', 'Broadcast reached their SIM: “Reply HERE…”']);
+      if (p.calls) tl.push(['06:00–09:58', `${p.calls} calls from you failed (network busy).`]);
+      if (p.status === 'here') tl.push([p.at, `Checked in via ${RAIL[p.via]}${p.phone ? ' from a ' + p.phone.toLowerCase() : ''}. Delivered to ${p.askers} people.`]);
+      if (p.status === 'with') tl.push([p.at, `${p.withWho} reported ${p.name.split(' ')[0]} is with them. Matched on 4 fields. Vouched by ${D.found.vouch}.`]);
+      if (p.status === 'witnessed') tl.push([D.witness.at, `${p.witBy} reported being with ${p.name.split(' ')[0]} when it happened. Shown as “Witnessed”, not as fact.`]);
+      const unknown = p.status === 'unknown';
+      return `<div class="pd">${nav(p.name, { sub: `${p.rel} · ${p.where}` })}
+        <div class="pd-head">${av(p, 64)}<div class="pd-st">${chip(p)}${unknown ? `<span class="muted">${p.askers} people are asking. ${p.phone ? p.phone + '. ' : ''}SMS and USSD prompts sent.</span>` : ''}${p.note ? `<span class="muted">${p.note}</span>` : ''}</div></div>
+        ${unknown && p.calls ? `<div class="card nudge ${S.jam && id === 'rohan' ? 'hot' : ''}">${ic('callx')}<div><b>${p.calls} failed calls to ${p.name.split(' ')[0]}.</b><span>Every retry takes a slot from someone’s one call that would have connected. We’ll tell you the second ${p.name.split(' ')[0]} answers, on any rail.</span></div></div>` : ''}
+        ${p.id === 'aanya' ? `<button class="card flag" data-go="careDetail" data-id="aanya">${ic('child')}<div><b>Dependent · kin ladder ${S.aanyaWith ? 'resolved' : 'running'}</b><span>${S.aanyaWith ? 'With ' + S.aanyaWith : 'Both guardians Unknown. You are first.'}</span></div>${ic('chevR', 'chev')}</button>` : ''}
+        ${section('What happened')}
+        <ol class="tl">${tl.map(([t, m]) => `<li><em>${t}</em><span>${m}</span></li>`).join('')}</ol>
+        ${section('Actions')}
+        <div class="acts">
+          ${unknown ? `<button class="btn ghost" data-act="askagain" data-id="${id}">${ic('sms')} Ask again by SMS (free)</button>
+          <button class="btn ghost" data-act="withme-p" data-id="${id}">${ic('people')} ${p.name.split(' ')[0]} is with me</button>
+          <button class="btn ghost quiet" data-act="witness-start" data-id="${id}">${ic('eye')} I was with them when it happened</button>` :
+          p.status === 'witnessed' ? `<button class="btn ghost" data-act="unwitness" data-id="${id}">${ic('undo')} Undo: show as Unknown again</button>` :
+          `<button class="btn ghost" data-act="msg" data-id="${id}">${ic('send')} Send one line by SMS</button>`}
+        </div>
+        ${p.ladder ? section('Who looks after ' + p.name.split(' ')[0]) + `<ol class="ladder">${p.ladder.map((l, i) => `<li><i>${i + 1}</i><span>${l}</span></li>`).join('')}</ol>` : ''}
+      </div>`;
+    },
+    find() {
+      const q = S.findQ.trim().toLowerCase();
+      const hits = q ? S.circle.filter((p) => p.name.toLowerCase().includes(q)) : [];
+      const isNum = /^[\d +]{6,}$/.test(S.findQ.trim());
+      return `<div class="find">
+        <div class="topbar"><div class="tb-t"><b>Find</b><span>Anyone, on any phone. They don’t need the app.</span></div></div>
+        <div class="search"><span>${ic('find')}</span><input id="findq" placeholder="Name or phone number" value="${S.findQ.replace(/"/g, '&quot;')}" autocomplete="off"><button class="ib" data-act="clearq" ${S.findQ ? '' : 'hidden'}>${ic('x')}</button></div>
+        ${!q ? `<div class="try"><span>Try</span>${['Rohan', 'Kamala', '98201 7', 'Neha'].map((t) => `<button class="pill" data-act="try" data-q="${t}">${t}</button>`).join('')}</div>` : ''}
+        ${hits.length ? section(`In your circle · ${hits.length}`) + hits.map(row).join('') : ''}
+        ${q && !hits.length && isNum ? (S.askedNumbers.includes(S.findQ.trim()) ? `<div class="card ok">${ic('check')}<div><b>You’re on the list for ${S.findQ.trim()}</b><span>You’ll hear the second this number checks in, by notification or SMS. 3 others are asking too.</span></div></div>` :
+          `<div class="card col"><div class="cd-t"><b>${S.findQ.trim()}</b><span>Not checked in yet. 3 other people are asking about this number.</span></div><button class="btn primary" data-act="asknum">${ic('bell')} Tell me the moment they answer</button><small class="muted">We send them one free SMS: “Someone is asking about you. Reply HERE.”</small></div>`) : ''}
+        ${q && !hits.length && !isNum ? `<div class="empty">No one called “${S.findQ.trim()}” in your circle. Try a number: a name alone matches too many people today.</div>` : ''}
+        ${!q ? `<div class="card add" data-act="found-start">${ic('child')}<div><b>Someone is with you who can’t check in?</b><span>A child, an elder, a patient. Report them and we match them to the people asking.</span></div></div>
+        <div class="stat-row"><div class="tile"><b>${num(S.world.answered / 1e6)}M</b><span>questions answered in Pune since 06:00</span></div><div class="tile"><b>${S.world.basic}%</b><span>of check-ins came from basic phones</span></div></div>` : ''}
+      </div>`;
+    },
+    care() {
+      const a = person('aanya'), k = person('kamala');
+      return `<div class="care">
+        <div class="topbar"><div class="tb-t"><b>Care</b><span>Who depends on whom. The part no safety check has.</span></div></div>
+        ${section('People who depend on you')}
+        ${a.status === 'unknown' ? `<button class="card flag" data-go="careDetail" data-id="aanya">${av(a, 44)}<div><b>Tara Iyer, 6</b><span class="red">No guardian accounted for · 16 h</span><span>Rohan ${ic('clock')} Unknown · Neha ${ic('clock')} Unknown</span></div>${ic('chevR', 'chev')}</button>` :
+          `<button class="card ok" data-go="careDetail" data-id="aanya">${av(a, 44)}<div><b>Tara Iyer, 6</b><span class="green">With ${S.aanyaWith} · vouched</span><span>${S.withHer ? 'You confirmed: coming for her.' : 'Tap to confirm who comes for her.'}</span></div>${ic('chevR', 'chev')}</button>`}
+        <button class="card" data-go="person" data-id="kamala">${av(k, 44)}<div><b>Kamala Iyer, 71</b><span>Guardian: you ${ic('check')}</span><span>${k.status === 'here' ? 'Checked in by SMS from Nashik.' : 'Not heard from yet. Ladder: you, Vinod, Mrs Deshpande.'}</span></div>${ic('chevR', 'chev')}</button>
+        <button class="card add" data-act="add-dep">${ic('plus')}<div><b>Add a child, elder or patient</b><span>Name their guardians and a ladder. Anyone in the circle can.</span></div></button>
+        ${section('If you can’t be reached')}
+        <div class="card list">${D.care.forMe.map((f) => `<div class="li">${ic('shield')}<b>${f.who}</b><span>${f.rel}</span><span class="chip here mini">Here</span></div>`).join('')}<div class="li dim">${ic('people')}<b>Verified neighbour</b><span>Any checked-in, opted-in adult within 500 m</span></div></div>
+        <div class="explain"><b>How the ladder runs.</b> When every guardian of a dependent is Unknown or Witnessed for 12 hours, the dependent is flagged. The first person on the ladder who is Here is asked. A neighbour placement needs two confirmations and is visible to the Child Welfare Committee feed.</div>
+      </div>`;
+    },
+    careDetail() {
+      const a = person('aanya');
+      const lad = D.care.mine[0].ladder;
+      const withHer = a.status === 'with';
+      return `<div class="cd">${nav('Tara Iyer, 6', { sub: 'Niece · Sea Breeze CHS, Andheri' })}
+        <div class="pd-head">${av(a, 64)}<div class="pd-st">${withHer ? `<span class="chip here">${ic('check')} With ${S.aanyaWith}</span><span class="muted">Reported ${D.found.at} via *444#. Vouched by ${D.found.vouch}.</span>` : `<span class="chip unk">${ic('alert')} No guardian accounted for</span><span class="muted">Rohan: Unknown. Neha: ${person('neha').status === 'witnessed' ? 'Witnessed' : 'Unknown'}. Flagged at 09:40 after 16 h.</span>`}</div></div>
+        ${withHer ? `<div class="card found">${ic('home')}<div><b>${D.found.reporter}</b><span>${D.found.reporterRel}</span><p>“${D.found.details}”</p><div class="matches">${D.found.matches.map((m) => `<span>${ic('check')} ${m}</span>`).join('')}</div></div></div>
+          ${S.withHer ? `<div class="card ok">${ic('check')}<div><b>You’re coming for her.</b><span>Mrs Rao has your number. The CWC Mumbai feed shows: Tara Iyer · with verified neighbour · kin en route.</span></div></div>` : `<div class="acts"><button class="btn primary big" data-act="confirm-aanya">${ic('check')} I’ll come for her</button><button class="btn ghost" data-act="msg" data-id="aanya">${ic('send')} SMS Mrs Rao (no calls)</button></div>`}` : ''}
+        ${section('Kin ladder')}
+        <ol class="ladder">${lad.map((l, i) => { const st = l.id === 'meera' ? 'here' : l.id === 'vinod' ? 'unknown' : l.id === 'neighbour' ? (withHer ? 'here' : 'wait') : 'wait'; return `<li class="${st} ${withHer && l.id === 'neighbour' ? 'on' : (!withHer && i === 0 ? 'on' : '')}"><i>${i + 1}</i><div><b>${l.who}</b><span>${l.rel}</span></div><span class="chip mini ${st === 'here' ? 'here' : st === 'unknown' ? 'unk' : 'wait'}">${st === 'here' ? 'Here' : st === 'unknown' ? 'Unknown' : 'Waiting'}</span></li>`; }).join('')}</ol>
+        <div class="explain">${withHer ? 'A neighbour placement is temporary. It is shown to the Child Welfare Committee and to everyone on the ladder. Tara moves up the ladder the moment a named relative arrives.' : 'You are first and you are 148 km away. If anyone reports a child matching Tara, you are told before anyone else.'}</div>
+        ${!withHer ? `<div class="acts"><button class="btn ghost" data-act="found-start">${ic('find')} Describe Tara for finders</button></div>` : ''}
+      </div>`;
+    },
+    foundIn() {
+      const f = D.found;
+      return `<div class="fi">${nav('Someone may have been found', { sub: `via *444# · ${f.at}` })}
+        <div class="card found big">${ic('child')}<div><b>“${f.name}”, about ${f.age}</b><span>Reported by ${f.reporter}</span><span>${f.reporterRel}</span><p>“${f.details}”</p></div></div>
+        ${section('Matches Tara Iyer on')}
+        <div class="matches card">${f.matches.map((m) => `<span>${ic('check')} ${m}</span>`).join('')}</div>
+        ${section('Who vouches for the reporter')}
+        <div class="card list"><div class="li">${ic('shield')}<b>${f.vouch}</b><span>Same building · on the Roll Call helpers list</span></div><div class="li">${ic('phone')}<b>${f.reporterPhone}</b><span>SIM registered 2014 · checked in 07:02</span></div></div>
+        <div class="acts"><button class="btn primary big" data-act="accept-found">${ic('check')} Yes, that’s Tara</button><button class="btn ghost" data-act="back">Not sure · ask for a photo</button></div>
+        <div class="explain">Saying yes marks Tara as “with Mrs Rao”. It tells the other 10 people asking about her, and the Child Welfare Committee feed. It does not hand over custody.</div>
+      </div>`;
+    },
+    area() {
+      const a = D.area; const pct = Math.round(100 * a.here / a.expected);
+      return `<div class="area">
+        <div class="topbar"><div class="tb-t"><b>Area</b><span>${a.name} · the count and verified notices</span></div></div>
+        <div class="card count"><div class="cnt-top"><div><b>${pct}%</b><span>of expected survivors checked in</span></div><div class="cnt-n"><em>${num(a.here)}</em><span>of ~${num(a.expected)} expected<br>(½ of the 2011 Census)</span></div></div>
+          <div class="bar"><i style="width:${pct}%"></i></div>
+          <div class="cnt-foot"><span>${Math.round(a.viaBasic * 100)}% via basic phones</span><span>${num(a.helpers)} helpers nearby</span></div></div>
+        <div class="stat-row"><div class="tile"><b>${num(a.depFlagged)}</b><span>dependents flagged</span></div><div class="tile"><b>${num(a.depPlaced)}</b><span>placed with kin or a neighbour</span></div></div>
+        ${section('Nearby wards')}
+        <div class="card wards">${a.wards.map((w) => `<div class="wd"><span>${w.w}</span><div class="bar sm"><i style="width:${w.pct}%"></i></div><b>${w.pct}%</b></div>`).join('')}</div>
+        ${section('Verified notices', S.rumour ? '<em class="red">1 rumour flagged</em>' : '')}
+        ${a.notices.map((n) => `<div class="notice ${n.ok ? '' : 'warn'} ${!n.ok && S.rumour ? 'hot' : ''}">${ic(n.ok ? 'shield' : 'alert')}<div><b>${n.from}</b><em>${n.at}</em><p>${n.text}</p></div></div>`).join('')}
+        <div class="explain">Counts use the 2011 Census as the baseline. A pincode above 50% is a red flag for impersonation, not good news.</div>
+      </div>`;
+    },
+    rails() {
+      return `<div class="rails">${nav('Four ways in', { sub: 'Reach beats features' })}
+        <div class="card list">${D.rails.map((r) => `<div class="li rail">${ic(r.ic)}<b>${r.name}</b><span>${r.sub}</span><em>${r.how}</em></div>`).join('')}</div>
+        ${section('What *444# looks like')}
+        <div class="ussd"><div class="u-t">ROLL CALL</div><div>1 I am here<br>2 Find someone<br>3 Someone is with me<br>4 I need help<br>5 Name who looks after me</div><div class="u-in">Reply: <span class="caret">_</span></div></div>
+        <div class="explain"><b>Why four.</b> In 2018 about 400 million people in India use a basic phone. USSD banking (*99#) and missed-call services already work on them. The four telcos zero-rate 5444, *444# and 1800-444-444 under Section 5 of the Telegraph Act. A check-in is bound to the SIM; a second circle member can confirm it.</div>
+      </div>`;
+    },
+    pulse() {
+      const p = D.pulse; const w = 300, h = 90;
+      const pts = p.series.map((v, i) => `${(i / (p.series.length - 1)) * w},${h - (v / 100) * h}`).join(' ');
+      return `<div class="pulse">${nav('Pulse', { sub: 'How Roll Call is doing · Day 1 · 10:14' })}
+        <div class="card north"><span class="k">North star</span><b>${p.north.value}</b><span class="kk">${p.north.label}</span><p>${p.north.sub}. Target ${p.north.target}.</p></div>
+        <div class="card chart"><div class="ch-h"><b>${p.resolved}%</b><span>of circle members resolved (Here or Witnessed) · target ${p.resolvedTarget}% in 24 h</span></div>
+          <svg viewBox="0 0 ${w} ${h + 6}" preserveAspectRatio="none"><line x1="0" y1="${h - 0.8 * h}" x2="${w}" y2="${h - 0.8 * h}" class="tgt"/><polyline points="${pts}" class="ln"/><circle cx="${w}" cy="${h - (p.resolved / 100) * h}" r="4" class="dt"/></svg>
+          <div class="ch-x"><span>06:00</span><span>08:00</span><span>10:00</span></div></div>
+        <div class="stat-row">${p.tiles.map((t) => `<div class="tile"><b>${t.v}</b><span>${t.k}</span><em>${t.s}</em></div>`).join('')}</div>
+        <div class="explain"><b>Counter-metric.</b> If a pincode shows more than 50% of its Census population checked in, something is wrong: impersonation or double counting. Unknown never auto-converts to anything.</div>
+      </div>`;
+    },
+    notifs() {
+      return `<div class="nf">${nav('Notifications')}
+        ${S.notifs.map((n) => `<div class="notice ${n.tone}">${ic(n.ic)}<div><p>${n.m}</p><em>${n.t}</em></div></div>`).join('')}
+      </div>`;
+    }
+  };
+
+  /* ================= sheets, toasts, banners ================= */
+  function sheet(html, cls = '') { const w = $('#sheet-wrap'); $('#sheet').className = 'sheet ' + cls; $('#sheet').innerHTML = html; w.classList.add('open'); }
+  function closeSheet() { $('#sheet-wrap').classList.remove('open'); }
+  let toastT; function toast(msg, tone = '') { const t = $('#toast'); t.className = 'toast show ' + tone; t.innerHTML = msg; clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2600); }
+  let bannerT; function banner(ic_, title, body, onTap, tone = '') { const b = $('#banner'); b.className = 'banner show ' + tone; b.innerHTML = `<span class="bi">${ic(ic_)}</span><div><b>${title}</b><span>${body}</span></div><em>now</em>`; b.onclick = () => { b.classList.remove('show'); onTap && onTap(); }; clearTimeout(bannerT); bannerT = setTimeout(() => b.classList.remove("show"), 9000); }
+  function notify(ic_, tone, m) { S.notifs.unshift({ t: nowStr(), ic: ic_, tone, m }); S.unread++; }
+  let minute = 14; const nowStr = () => `10:${String(minute).padStart(2, '0')}`;
+
+  /* ================= actions ================= */
+  const ACT = {
+    back, checkin() {
+      S.checked = true; S.sentN = 0; render('fwd');
+      D.askers.forEach((a, i) => setTimeout(() => { S.sentN = i + 1; rerenderKeep(); if (i === D.askers.length - 1) { log('out', 'Meera Joshi · app · Kothrud → delivered to 9 askers (5 SMS, 4 app, 1 abroad)'); bump('here', 1); } }, 260 + i * 240));
+      pp('app', 'Check-in from +91 98220 41xxx', 'Fan-out: 9 askers');
+    },
+    withme() { sheet(`<h3>Who is with you?</h3><p>Check in someone whose phone is dead or who can’t use one.</p><div class="opts"><button class="opt" data-act="withme-pick" data-name="Arjun">Arjun (husband)</button><button class="opt" data-act="withme-pick" data-name="A child">A child, no phone</button><button class="opt" data-act="withme-pick" data-name="An elder">An elder, no phone</button></div><small>Shown to their askers as “with Meera”, from your SIM.</small>`); },
+    'withme-pick'(b) { closeSheet(); toast(`${b.dataset.name}: checked in as “with Meera”.`, 'ok'); log('out', `“With” check-in from Meera’s SIM: ${b.dataset.name}`); },
+    'withme-p'(b) { const p = person(b.dataset.id); p.status = 'with'; p.withWho = 'you'; p.at = nowStr(); rerenderKeep(); toast(`${p.name.split(' ')[0]} marked “with you”. ${p.askers} people told.`, 'ok'); log('out', `${p.name} · with Meera · delivered to ${p.askers} askers`); },
+    askagain(b) { const p = person(b.dataset.id); toast(`One free SMS sent to ${p.name.split(' ')[0]}: “Meera is asking. Reply HERE.”`); log('out', `SMS prompt → ${p.name} (${p.where})`); },
+    msg(b) { const p = person(b.dataset.id) || { name: 'Mrs Rao' }; sheet(`<h3>One line by SMS</h3><p>To ${p.name.split(' ')[0]}. Keeps the network for everyone.</p><div class="msgbox">${p.id === 'aanya' || !p.id ? 'Thank you. I am Tara’s aunt, coming from Pune. Please keep her with you.' : 'Saw you’re here. Don’t call, I know. Love you.'}</div><div class="acts"><button class="btn primary" data-act="msg-send">${ic('send')} Send</button><button class="btn ghost" data-act="close">Cancel</button></div>`); },
+    'msg-send'() { closeSheet(); toast('Sent by SMS. 1 of 1 delivered.', 'ok'); },
+    close() { closeSheet(); },
+    clearq() { S.findQ = ''; rerenderKeep(); $('#findq') && $('#findq').focus(); },
+    try(b) { S.findQ = b.dataset.q; rerenderKeep(); },
+    asknum() { S.askedNumbers.push(S.findQ.trim()); rerenderKeep(); toast('You’re on the list. One free SMS sent to them.', 'ok'); log('out', `Ask registered for ${S.findQ.trim()} (4 askers now)`); },
+    'found-start'() { sheet(`<h3>Someone is with you?</h3><p>We match them to the people asking. Four fields are enough.</p><div class="form"><label>Name they give<input value="Tara"></label><label>Age<input value="6"></label><label>A parent’s name<input value="Rohan"></label><label>Where you are<input value="Sea Breeze CHS, Andheri"></label></div><div class="acts"><button class="btn primary" data-act="close">${ic('send')} Report</button><button class="btn ghost" data-act="close">Cancel</button></div><small>Your SIM and a second checked-in adult vouch for you. Shown to the kin ladder and the CWC feed.</small>`); },
+    'add-dep'() { sheet(`<h3>Add someone who depends on you</h3><div class="form"><label>Name<input placeholder="e.g. Ajoba"></label><label>Guardians (who looks after them now)<input placeholder="You, and…"></label><label>Ladder: who should step in, in order<input placeholder="Sister, then neighbour…"></label></div><div class="acts"><button class="btn primary" data-act="close">Save</button><button class="btn ghost" data-act="close">Cancel</button></div><small>Anyone in a circle can add a dependent. The ladder is visible to everyone on it.</small>`); },
+    'witness-start'(b) { const p = person(b.dataset.id); sheet(`<h3>Were you with ${p.name.split(' ')[0]} when it happened?</h3><p class="care-text">This is shown to their circle as <b>“Witnessed by Meera”</b>. Never as a fact, never as a death. It can be undone by you at any time.</p><div class="acts"><button class="btn dark" data-act="witness-do" data-id="${p.id}">${ic('eye')} Yes, I was there</button><button class="btn ghost" data-act="close">Not now</button></div>`, 'care'); },
+    'witness-do'(b) { const p = person(b.dataset.id); p.status = 'witnessed'; p.witBy = 'Meera'; closeSheet(); rerenderKeep(); toast(`${p.name.split(' ')[0]}: shown as Witnessed by you.`); },
+    unwitness(b) { const p = person(b.dataset.id); p.status = 'unknown'; p.witBy = null; rerenderKeep(); toast(`${p.name.split(' ')[0]} is Unknown again.`); },
+    'accept-found'() { const a = person('aanya'); a.status = 'with'; a.withWho = 'Mrs Rao'; a.at = D.found.at; S.aanyaWith = 'Mrs Sunita Rao'; S.stack = []; go('careDetail', { id: 'aanya' }, { replace: true }); toast('Tara: with Mrs Rao. 10 people told.', 'ok'); log('out', 'Tara Iyer · with verified neighbour (Andheri) · 10 askers + CWC Mumbai feed'); notify('child', 'here', 'Tara is with Mrs Sunita Rao (neighbour, Andheri). Vouched. Kin ladder updated.'); },
+    'confirm-aanya'() { S.withHer = true; rerenderKeep(); toast('Mrs Rao and the CWC feed updated: kin en route.', 'ok'); log('out', 'Ladder: Meera Joshi (aunt) en route · CWC Mumbai feed updated'); },
+    'witness-accept'() { const p = person('neha'); p.status = 'witnessed'; p.witBy = 'Priya M.'; closeSheet(); go('circle', {}, { replace: true }); toast('Neha: shown as Witnessed by Priya M. Rohan stays Unknown.'); log('in', 'Witness report: Neha Iyer · by Priya Menon (colleague) · shown as Witnessed, reversible'); },
+    'witness-later'() { closeSheet(); toast('Kept as Unknown. The report stays in Neha’s timeline.'); },
+    reset() { location.href = location.pathname; },
+    tourPrev() { tour(S.tourStep - 1); }, tourNext() { tour(S.tourStep + 1); }
+  };
+
+  /* ================= world panel ================= */
+  function log(k, m) { S.log.unshift({ t: nowStr(), k, m }); renderLog(); }
+  function renderLog() { $('#console').innerHTML = S.log.slice(0, 40).map((l) => `<div class="ln ${l.k}"><em>${l.t}</em><span>${l.m}</span></div>`).join(''); }
+  function bump(k, n) { S.world[k] += n; renderWorld(); }
+  function renderWorld() {
+    const w = S.world; const pct = Math.round(100 * w.here / w.expected);
+    $('#w-here').textContent = num(w.here); $('#w-pct').textContent = pct + '%';
+    $('#w-fail').textContent = w.failing + '%'; $('#w-ans').textContent = (w.answered / 1e6).toFixed(1) + 'M'; $('#w-basic').textContent = w.basic + '%';
+    $('#w-bar').style.width = pct + '%'; $('#w-failbar').style.width = w.failing + '%';
+  }
+  // feature phone simulator
+  function pp(kind, line1, line2) { const f = $('#fp-screen'); f.innerHTML = `<div class="fp-h">${kind === 'ussd' ? 'USSD' : kind === 'call' ? 'Calling' : kind === 'app' ? 'Roll Call' : 'Messages'}</div><div class="fp-b">${line1}</div><div class="fp-s">${line2 || ''}</div>`; f.classList.remove('flash'); void f.offsetWidth; f.classList.add('flash'); }
+  function ppSeq(steps) { let t = 0; steps.forEach(([ms, ...a]) => { t += ms; setTimeout(() => pp(...a), t); }); return t; }
+
+  /* ================= scenarios ================= */
+  const SCN = {
+    jam() {
+      S.jam = true; S.world.failing = 94; renderWorld();
+      go('person', { id: 'rohan' });
+      const ov = $('#callov'); ov.innerHTML = `<div class="co-av">RI</div><b>Rohan Iyer</b><span>Calling…</span>`; ov.classList.add('show');
+      setTimeout(() => { ov.querySelector('span').textContent = 'Call failed · network busy'; ov.classList.add('fail'); }, 1300);
+      setTimeout(() => { ov.classList.remove('show', 'fail'); const p = person('rohan'); p.calls++; rerenderKeep(); toast('That was call 42. Roll Call is asking Rohan for you.', 'warn'); }, 2600);
+      log('net', 'Voice calls failing: 94%. Retry storm: 2.1 attempts per failed call.');
+      pp('call', 'Network busy', 'Please try later');
+      setTimeout(() => { S.world.failing = 90; renderWorld(); log('net', 'Check-ins up, call attempts per SIM −64% vs. the first hour. Failing: 90%.'); }, 5200);
+    },
+    sms() {
+      const t = ppSeq([[0, 'sms', 'ROLLCL: Reply HERE to tell your family you are alive…', 'Inbox · 06:00'], [1400, 'sms', 'Reply to 5444:', 'H'], [350, 'sms', 'Reply to 5444:', 'HE'], [350, 'sms', 'Reply to 5444:', 'HER'], [350, 'sms', 'Reply to 5444:', 'HERE'], [700, 'sms', 'Message sent', 'HERE → 5444 · free']]);
+      setTimeout(() => {
+        const p = person('kamala'); p.status = 'here'; p.via = 'sms'; p.at = nowStr(); p.note = 'Replied HERE from a Nokia 105. Delivered to 4 people, one in Dubai.';
+        bump('here', 1); log('in', 'Kamala Iyer · SMS · Nashik → delivered to 4 askers (Meera, Vinod, Mrs Deshpande, Rahul · Dubai)');
+        notify('sms', 'here', 'Aai is here (SMS, Nashik). Replied HERE from her Nokia.');
+        rerenderKeep(); banner('sms', 'Aai is here', 'Kamala Iyer · SMS · Nashik · ' + nowStr(), () => go('person', { id: 'kamala' }), 'here');
+      }, t + 500);
+    },
+    missed() {
+      const t = ppSeq([[0, 'call', 'Calling 1800-444-444', 'ring…'], [1300, 'call', 'Call ended', '1 ring · ₹0']]);
+      setTimeout(() => {
+        const p = person('shobha'); p.status = 'here'; p.via = 'call'; p.at = nowStr(); p.note = 'One missed call from her basic phone. Caller ID is the check-in.';
+        bump('here', 1); log('in', 'Shobha Joshi · missed call · Sadashiv Peth → delivered to 5 askers');
+        notify('call', 'here', 'Shobha aai is here (missed call, Sadashiv Peth).');
+        rerenderKeep(); banner('call', 'Shobha aai is here', 'Missed call · Sadashiv Peth · ' + nowStr(), () => go('person', { id: 'shobha' }), 'here');
+      }, t + 400);
+    },
+    found() {
+      if (person('aanya').status === 'with') { toast('Tara is already with Mrs Rao.'); return; }
+      const t = ppSeq([[0, 'ussd', '*444#', 'Sending…'], [900, 'ussd', '1 I am here  2 Find  3 Someone is with me  4 Help', 'Reply: 3'], [1100, 'ussd', 'Name they give?', 'Reply: Tara'], [1000, 'ussd', 'Age? Parent’s name?', 'Reply: 6, Rohan'], [1000, 'ussd', 'Report sent. Matching…', 'Mrs S. Rao · Andheri']]);
+      setTimeout(() => {
+        log('in', 'Found-alone report via *444# · Andheri · matches Tara Iyer on 4 fields · vouch: D. Shetty');
+        notify('child', 'warn', 'Someone may have found Tara. Reported by a neighbour via *444#. Tap to check.');
+        banner('child', 'Tara may have been found', 'Neighbour report · 4 fields match · tap to check', () => go('foundIn'), 'warn');
+        rerenderKeep();
+      }, t + 500);
+    },
+    witness() {
+      if (person('neha').status === 'witnessed') { toast('Neha is already shown as Witnessed.'); return; }
+      pp('app', 'Priya Menon · app', 'Witness report filed · Andheri');
+      log('in', 'Witness report received about Neha Iyer · by Priya Menon · awaiting Meera');
+      setTimeout(() => {
+        banner('eye', 'A witness report about Neha', 'From Priya Menon, her colleague. Tap when you’re ready.', () => {
+          sheet(`<h3>About Neha</h3><p class="care-text">${D.witness.by}, ${D.witness.byRel.toLowerCase()}, reported at ${D.witness.at}:</p><blockquote>“${D.witness.text}”</blockquote><p class="care-text">If you accept, Neha is shown to her circle as <b>“Witnessed by Priya M.”</b> Not as a fact, not as a death. You can undo it. <b>Rohan stays Unknown</b>: nobody has reported seeing him.</p><div class="acts"><button class="btn dark" data-act="witness-accept">${ic('eye')} Show as Witnessed</button><button class="btn ghost" data-act="witness-later">Keep as Unknown for now</button></div>`, 'care');
+        }, 'wit');
+      }, 900);
+    },
+    rumour() {
+      S.rumour = true;
+      log('net', 'WhatsApp forward spreading in Pune: “List of survivors in Mumbai” · 2,300 reports in 20 min');
+      pp('sms', 'FWD: LIST OF SURVIVORS MUMBAI…', 'Forwarded many times');
+      setTimeout(() => { log('sys', 'Roll Call verified notice pushed to 411038: no such list exists'); S.world.answered += 40000; renderWorld(); notify('alert', 'warn', 'Verified: the “survivor list” forward is false. No such list exists. Check people by number, not by lists.'); banner('alert', 'That survivor list is false', 'Roll Call · verified · no such list exists', () => go('area'), 'warn'); if (S.screen === 'area') rerenderKeep(); }, 1500);
+    }
+  };
+
+  /* ================= tour ================= */
+  function tour(i) {
+    if (i < 0 || i >= D.tour.length) return;
+    S.tourStep = i; const st = D.tour[i];
+    $$('#tour li').forEach((li, k) => { li.classList.toggle('on', k === i); li.classList.toggle('done', k < i); });
+    const li = $$('#tour li')[i]; li && li.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    closeSheet();
+    if (st.s === 'checkin') { S.checked = false; }
+    if (st.s) { if (st.s === 'circle' || st.s === 'find' || st.s === 'care' || st.s === 'area') { S.stack = []; S.screen = st.s; S.params = {}; render('tab'); } else go(st.s, st.p || {}, { replace: st.s === 'lock' || st.s === 'checkin' }); }
+    if (st.scn) setTimeout(() => SCN[st.scn](), st.s ? 700 : 150);
+    $('#tour-prev').disabled = i === 0; $('#tour-next').disabled = i === D.tour.length - 1;
+  }
+  function renderTour() {
+    $('#tour').innerHTML = D.tour.map((t, i) => `<li data-step="${i}"><i>${i + 1}</i><div><b>${t.t}</b><span>${t.d}</span></div></li>`).join('');
+  }
+
+  /* ================= events ================= */
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act],[data-go],[data-scn],[data-step]'); if (!b) return;
+    if (b.dataset.step !== undefined) { tour(+b.dataset.step); return; }
+    if (b.dataset.scn) { SCN[b.dataset.scn](); return; }
+    if (b.dataset.go) { if (b.dataset.go === 'notifs') S.unread = 0; go(b.dataset.go, b.dataset.id ? { id: b.dataset.id } : {}); return; }
+    const fn = ACT[b.dataset.act]; if (fn) fn(b);
+  });
+  document.addEventListener('input', (e) => { if (e.target.id === 'findq') { S.findQ = e.target.value; const y = screenEl().scrollTop; rerenderKeep(); screenEl().scrollTop = y; const inp = $('#findq'); inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); } });
+  document.addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.key === 'ArrowRight') tour(S.tourStep + 1); if (e.key === 'ArrowLeft') tour(S.tourStep - 1); if (e.key === 'Escape') closeSheet(); });
+  $('#sheet-wrap').addEventListener('click', (e) => { if (e.target.id === 'sheet-wrap') closeSheet(); });
+
+  /* ================= clock + fit ================= */
+  function tick() { minute++; if (minute > 59) minute = 59; $$('.sb-time').forEach((n) => (n.textContent = nowStr())); if (Math.random() < 0.6) { S.world.here += 1200 + Math.round(Math.random() * 900); S.world.answered += 9000 + Math.round(Math.random() * 6000); renderWorld(); } }
+  function fit() { const ph = $('#phone'); if (window.innerWidth <= 760 || SOLO) { ph.style.zoom = ''; return; } ph.style.zoom = Math.min(1, (window.innerHeight - 48) / 812); }
+
+  /* ================= boot ================= */
+  S = fresh(); renderTour(); renderLog(); renderWorld();
+  $$('.sb-time').forEach((n) => (n.textContent = D.clock));
+  $('#scn-grid').innerHTML = D.scenarios.map((s) => `<button data-scn="${s.id}"><b>${s.name}</b><span>${s.sub}</span></button>`).join('');
+  pp('sms', D.broadcast.text.slice(0, 70) + '…', 'ROLLCL · 06:00');
+  // Deep links for screen captures: ?s=circle&solo=1&done=sms,found,witness&scroll=300&sheet=witness
+  const q = new URLSearchParams(location.search);
+  if (SOLO) document.body.classList.add('solo');
+  if (FILM) document.body.classList.add('film', 'film' + FILM);
+  const done = (q.get('done') || '').split(',').filter(Boolean);
+  if (done.includes('checkin')) { S.checked = true; S.sentN = D.askers.length; }
+  if (done.includes('sms')) { const p = person('kamala'); p.status = 'here'; p.via = 'sms'; p.at = '10:16'; p.note = 'Replied HERE from a Nokia 105. Delivered to 4 people, one in Dubai.'; }
+  if (done.includes('missed')) { const p = person('shobha'); p.status = 'here'; p.via = 'call'; p.at = '10:19'; }
+  if (done.includes('found')) { const a = person('aanya'); a.status = 'with'; a.withWho = 'Mrs Rao'; a.at = D.found.at; S.aanyaWith = 'Mrs Sunita Rao'; }
+  if (done.includes('confirm')) S.withHer = true;
+  if (done.includes('witness')) { const p = person('neha'); p.status = 'witnessed'; p.witBy = 'Priya M.'; }
+  if (done.includes('rumour')) S.rumour = true;
+  if (done.includes('jam')) S.jam = true;
+  if (q.get('q')) S.findQ = q.get('q');
+  if (q.get('s')) { S.screen = q.get('s'); S.params = q.get('id') ? { id: q.get('id') } : {}; render(); }
+  else render();
+  if (q.get('sheet') === 'witness') ACT['witness-start']({ dataset: { id: 'neha' } });
+  if (q.get('sheet') === 'with') ACT.withme();
+  if (q.get('banner') === 'sms') banner('sms', 'Aai is here', 'Kamala Iyer · SMS · Nashik · 10:16', null, 'here');
+  if (q.get('banner') === 'found') banner('child', 'Tara may have been found', 'Neighbour report · 4 fields match · tap to check', null, 'warn');
+  if (q.get('scroll')) setTimeout(() => { screenEl().scrollTop = +q.get('scroll'); }, 50);
+  if (!SOLO && !FILM) { setInterval(tick, 20000); fit(); window.addEventListener('resize', fit); setTimeout(() => tour(0), 400); }
+  if (FILM === '2') fit();
+  window.ROLLCALL = { tour, scn: SCN, act: ACT, go, banner, closeBanner: () => $('#banner').classList.remove('show') };
+})();
+
+</script>
+</body>
+</html>
